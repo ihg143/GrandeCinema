@@ -64,7 +64,34 @@
         <p>Aucun film disponible pour le moment.</p>
 
        {% endfor %}
+                {% for film in films|slice(0, 4) %}
 
+                    <div class="film">
+                        <a href="#">
+
+                            <div class="poster">
+                                {% if film.imageFilm %}
+                                    <img
+                                        src="{{ asset('image/' ~ film.imageFilm) }}"
+                                        alt="{{ film.nomFilm }}"
+                                    >
+                                {% else %}
+                                    <span>{{ film.nomFilm }}</span>
+                                {% endif %}
+                            </div>
+
+                            <h3>{{ film.nomFilm }}</h3>
+
+                            <p>{{ film.description }}</p>
+
+                        </a>
+                    </div>
+
+                {% else %}
+
+                    <p>Aucun film disponible pour le moment.</p>
+
+                {% endfor %}
             </div>
 
         </section>
