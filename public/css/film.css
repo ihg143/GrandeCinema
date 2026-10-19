@@ -1,0 +1,255 @@
+
+:root {
+    --noir: #000;
+    --fond: #121212;
+    --carte: #1c1c1c;
+    --jaune: #ffcc00;
+    --blanc: #fff;
+    --gris: #b5b5b5;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+:focus-visible {
+    outline: 3px solid var(--jaune);
+    outline-offset: 2px;
+}
+
+/* ===== Hero ===== */
+.hero {
+    min-height: 540px;
+    display: flex;
+    align-items: center;
+    padding: 60px 24px 60px 85px;
+    background:
+        linear-gradient(90deg, rgba(0,0,0,.85) 0%, rgba(0,0,0,.4) 60%, rgba(0,0,0,.2) 100%),
+        url('/images/hero.jpg') center / cover no-repeat,
+        radial-gradient(circle at 80% 40%, #5a0f14, #120405 70%);
+}
+
+.hero__content {
+    max-width: 640px;
+}
+
+.hero__meta {
+    margin-bottom: 6px;
+}
+
+.hero__title {
+    font-size: clamp(3rem, 7vw, 4.5rem);
+    line-height: 1.05;
+    color: var(--jaune);
+    margin-bottom: 18px;
+}
+
+.hero__text {
+    margin-bottom: 22px;
+}
+
+.hero__actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* ===== Boutons ===== */
+.btn {
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 10px 24px;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+}
+
+a.btn--primary,
+a.btn--primary:visited,
+button.btn--primary {
+    background: #ffcc00;
+    color: #000;
+}
+
+a.btn--primary:hover,
+button.btn--primary:hover {
+    background: #fff;
+    color: #000;
+}
+
+a.btn--outline,
+a.btn--outline:visited {
+    border-color: #fff;
+    color: #fff;
+    font-weight: 400;
+}
+
+a.btn--outline:hover {
+    background: #fff;
+    color: #000;
+}
+
+.btn--block {
+    display: block;
+    width: 100%;
+}
+
+/* ===== À l'affiche ===== */
+.affiche {
+    padding: 70px 24px 80px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.section-title {
+    font-size: 2rem;
+    padding-left: 14px;
+    border-left: 6px solid var(--jaune);
+    margin-bottom: 32px;
+}
+
+.films {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 28px;
+}
+
+.film,
+.film *,
+.film *::before,
+.film *::after {
+    box-sizing: border-box;
+}
+
+.film {
+    display: flex;
+    flex-direction: column;
+    background: var(--carte);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.film__poster {
+    aspect-ratio: 2 / 3;
+    background: linear-gradient(160deg, #2e2e2e, #0d0d0d) center / cover no-repeat;
+    overflow: hidden;
+}
+
+/* ===== Images des films ===== */
+.film__poster img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.film__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 16px;
+}
+
+.film__title {
+    font-size: 1.05rem;
+    margin-bottom: 4px;
+}
+
+.film__info {
+    color: var(--gris);
+    font-size: .9rem;
+    margin-bottom: 16px;
+}
+
+/* Espace entre la description et le bouton */
+.film__body .btn {
+    margin-top: 16px;
+}
+
+/* ===== Footer ===== */
+.footer {
+    padding: 24px;
+    text-align: center;
+    background: var(--noir);
+    color: var(--gris);
+    font-size: .9rem;
+}
+
+/* ===== Genre du film ===== */
+.film__genre {
+    display: inline-block;
+    align-self: flex-start;
+    color: var(--jaune) !important;
+    background: #333;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+    .hero {
+        padding: 40px 20px;
+    }
+}
+
+/* ===== Page "Tous les films" + recherche ===== */
+.page-films {
+    padding: 50px 24px 80px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.page-films__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+}
+
+.page-films__top .section-title {
+    margin-bottom: 0;
+}
+
+.film-search {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    max-width: 520px;
+}
+
+.film-search input {
+    flex: 1;
+    padding: 10px 16px;
+    border: 2px solid var(--jaune);
+    border-radius: 24px;
+    background: var(--noir);
+    color: var(--blanc);
+    font-size: 1rem;
+}
+
+.film-search input::placeholder {
+    color: var(--gris);
+}
+
+.film-result {
+    color: var(--gris);
+    margin-bottom: 20px;
+}
+
+.film-empty {
+    color: var(--gris);
+    grid-column: 1 / -1;
+}

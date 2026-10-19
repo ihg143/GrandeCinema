@@ -1,0 +1,226 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration - Grand Cinéma{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+{% endblock %}
+
+{% block body %}
+    {% include 'partials/header.html.twig' %}
+
+    <main class="admin">
+
+        <h1 class="admin-title">Administration Grand Cinéma</h1>
+
+        {# ===== BOUTONS DE NAVIGATION ===== #}
+        <nav class="admin-navigation">
+           <a href="{{ path('admin_film_index') }}" class="admin-nav-button">Gestion des films</a>
+            <a href="#seances" class="admin-nav-button">Gestion des séances</a>
+            <a href="#reservations" class="admin-nav-button">Gestion des réservations</a>
+        </nav>
+
+        {# ===== CHIFFRES CLÉS ===== #}
+        <section class="stat-grid">
+
+            <article class="stat-card">
+                <p class="stat-label">Films à l'affiche</p>
+                <p class="stat-number">{{ stats.nbFilms }}</p>
+                <a href="#films" class="stat-link">Gérer les films</a>
+            </article>
+
+            <article class="stat-card">
+                <p class="stat-label">Séances programmées</p>
+                <p class="stat-number">{{ stats.nbSeances }}</p>
+                <p class="stat-info">{{ stats.seancesAujourdhui }} aujourd'hui</p>
+                <a href="#seances" class="stat-link">Gérer les séances</a>
+            </article>
+
+            <article class="stat-card">
+                <p class="stat-label">Réservations</p>
+                <p class="stat-number">{{ stats.nbReservations }}</p>
+                <a href="#reservations" class="stat-link">Suivre les réservations</a>
+            </article>
+
+            <article class="stat-card stat-card-yellow">
+                <p class="stat-label">Taux de remplissage</p>
+                <p class="stat-number">{{ stats.tauxRemplissage }}%</p>
+
+                <div class="progress">
+                    <div class="progress-fill"
+                         style="width: {{ stats.tauxRemplissage }}%">
+                    </div>
+                </div>
+            </article>
+
+        </section>
+
+        {# ===== REMPLISSAGE ET AFFLUENCE ===== #}
+        <section class="admin-row">
+
+            <article class="admin-card">
+                <h2 class="card-title">Taux de remplissage par film</h2>
+
+                {% if remplissage is empty %}
+                    <p class="empty-text">
+                        Aucune statistique disponible pour le moment.
+                    </p>
+                {% else %}
+                    {% for ligne in remplissage %}
+                        <div class="fill-line">
+                            <div class="fill-header">
+                                <span>{{ ligne.film }}</span>
+                                <span>{{ ligne.taux }}%</span>
+                            </div>
+
+                            <div class="progress">
+                                <div class="progress-fill {{ ligne.taux < 50 ? 'low' : '' }}"
+                                     style="width: {{ ligne.taux }}%">
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </article>
+
+            <article class="admin-card">
+                <h2 class="card-title">Pics d'affluence</h2>
+                <p class="card-subtitle">Nombre de spectateurs par jour.</p>
+
+                {% if affluence is empty or maxAffluence == 0 %}
+                    <p class="empty-text">
+                        Aucune donnée d'affluence disponible.
+                    </p>
+                {% else %}
+                    <div class="chart">
+                        {% for jour in affluence %}
+                            <div class="chart-col">
+                                <span class="chart-value">{{ jour.valeur }}</span>
+
+                                <div class="chart-bar {{ jour.festival ? 'festival' : '' }}"
+                                     style="height: {{ (jour.valeur / maxAffluence * 100)|round }}%">
+                                </div>
+
+                                <span class="chart-day">{{ jour.jour }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </article>
+
+        </section>
+
+        {# ===== GESTION DES FILMS ===== #}
+        <section id="films" class="admin-card">
+            <h2 class="card-title">Gestion des films</h2>
+
+            {% if films is empty %}
+                <p class="empty-text">Aucun film enregistré.</p>
+            {% else %}
+                <div class="table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Identifiant</th>
+                                <th>Affiche</th>
+                                <th>Nom du film</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for film in films %}
+                                <tr>
+                                    <td>{{ film.idFilm }}</td>
+
+                                    <td>
+                                        {% if film.imageFilm %}
+                                            <img
+                                                src="{{ asset('image/' ~ film.imageFilm) }}"
+                                                alt="Affiche de {{ film.nomFilm }}"
+                                                class="film-poster"
+                                                loading="lazy"
+                                            >
+                                        {% else %}
+                                            <span class="empty-text">Pas d'affiche</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>{{ film.nomFilm }}</td>
+                                    <td>{{ film.description }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </section>
+
+        {# ===== GESTION DES SÉANCES ===== #}
+        <section id="seances" class="admin-card">
+            <h2 class="card-title">Gestion des séances</h2>
+
+            {% if seances is empty %}
+                <p class="empty-text">Aucune séance programmée.</p>
+            {% else %}
+                <div class="table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Film</th>
+                                <th>Date</th>
+                                <th>Horaire</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for seance in seances %}
+                                <tr>
+                                    <td>{{ seance.film.nomFilm }}</td>
+                                    <td>{{ seance.dateSeance|date('d/m/Y') }}</td>
+                                    <td>{{ seance.horaireSeance|date('H:i') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </section>
+
+        {# ===== GESTION DES RÉSERVATIONS ===== #}
+        <section id="reservations" class="admin-card">
+            <h2 class="card-title">Gestion des réservations</h2>
+
+            {% if dernieresReservations is empty %}
+                <p class="empty-text">Aucune réservation à afficher.</p>
+            {% else %}
+                <div class="table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Film</th>
+                                <th>Places</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for resa in dernieresReservations %}
+                                <tr>
+                                    <td>{{ resa.client }}</td>
+                                    <td>{{ resa.film }}</td>
+                                    <td>{{ resa.places }}</td>
+                                    <td>{{ resa.date }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </section>
+
+    </main>
+{% endblock %}

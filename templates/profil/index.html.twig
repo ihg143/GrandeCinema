@@ -1,0 +1,139 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil - GrandCiné{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
+{% endblock %}
+
+{% block body %}
+
+{% set prenom = app.user.prenom %}
+{% set nom = app.user.nom %}
+{% set email = app.user.email %}
+
+{# Le header sera ajouté ici plus tard : {% include 'partials/_header.html.twig' %} #}
+{% include 'partials/header.html.twig' %}
+<main class="profile">
+
+    {# ===== Bandeau du haut ===== #}
+    <section class="profile-hero">
+        <div class="profile-avatar">
+            {{ prenom|first|upper }}{{ nom|first|upper }}
+        </div>
+        <div class="profile-hero-text">
+            <h1 class="profile-name">{{ prenom }} {{ nom }}</h1>
+            <p class="profile-email">{{ email }}</p>
+        </div>
+        <a href="{{ path('app_logout') }}" class="btn btn-outline">Déconnexion</a>
+    </section>
+
+    <div class="profile-layout">
+
+        {# ===== Menu à gauche ===== #}
+        <nav class="profile-menu">
+            <a href="#infos" class="profile-menu-link active">Mes informations</a>
+            <a href="#reservations" class="profile-menu-link">Mes réservations</a>
+            <a href="#password" class="profile-menu-link">Mot de passe</a>
+        </nav>
+
+        <div class="profile-content">
+
+            {# ===== Informations personnelles ===== #}
+            <section id="infos" class="profile-block">
+                <h2 class="block-title">Mes informations</h2>
+                    {# ===== Messages (succès / erreur) ===== #}
+                 {% for type, messages in app.flashes %}
+                    {% for message in messages %}
+                    <div class="flash flash-{{ type }}">{{ message }}</div>
+                    {% endfor %}
+                 {% endfor %}
+                <p class="profile-info">Vous pouvez modifier vos informations personnelles ci-dessous.</p>
+
+
+                <form method="post" action="#" class="profile-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="prenom">Prénom</label>
+                            <input type="text" id="prenom" name="prenom" value="{{ prenom }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="nom">Nom</label>
+                            <input type="text" id="nom" name="nom" value="{{ nom }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Adresse e-mail</label>
+                        <input type="email" id="email" name="email" value="{{ email }}">
+                    </div>
+
+                    <button type="submit" name="update_profile" class="btn btn-yellow">Enregistrer</button>
+                </form>
+            </section>
+
+            {# ===== Réservations ===== #}
+            <section id="reservations" class="profile-block">
+                <h2 class="block-title">Mes réservations</h2>
+
+                {% if reservations is defined and reservations|length > 0 %}
+                    <div class="reservation-list">
+                        {% for reservation in reservations %}
+                            <article class="reservation-card">
+                                <img src="{{ asset('images/films/' ~ reservation.seance.film.affiche) }}"
+                                     alt="Affiche de {{ reservation.seance.film.titre }}"
+                                     class="reservation-poster">
+
+                                <div class="reservation-info">
+                                    <h3 class="reservation-title">{{ reservation.seance.film.titre }}</h3>
+                                    <p class="reservation-date">
+                                        {{ reservation.seance.date|date('d/m/Y') }} à {{ reservation.seance.date|date('H:i') }}
+                                    </p>
+                                    <p class="reservation-places">
+                                        {{ reservation.nombrePlaces }} place{{ reservation.nombrePlaces > 1 ? 's' : '' }}
+                                    </p>
+                                </div>
+
+                                <a href="#" class="btn btn-outline">Voir le billet</a>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty">
+                        <p>Vous n'avez aucune réservation pour le moment.</p>
+                        <a href="#" class="btn btn-yellow">Voir les films à l'affiche</a>
+                    </div>
+                {% endif %}
+            </section>
+
+            {# ===== Mot de passe ===== #}
+            <section id="password" class="profile-block">
+                <h2 class="block-title">Mot de passe</h2>
+
+                <form method="post" action="#" class="profile-form">
+                    <div class="form-group">
+                        <label for="ancien">Mot de passe actuel</label>
+                        <input type="password" id="ancien" name="current_password">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nouveau">Nouveau mot de passe</label>
+                            <input type="password" id="nouveau" name="new_password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmer">Confirmer</label>
+                            <input type="password" id="confirmer" name="confirm_password">
+                        </div>
+                    </div>
+
+                    <button type="submit" name="update_password" class="btn btn-yellow">Changer le mot de passe</button>
+                </form>
+            </section>
+
+        </div>
+    </div>
+</main>
+
+{% endblock %}
