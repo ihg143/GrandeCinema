@@ -1,0 +1,94 @@
+
+{% include 'partials/header.html.twig' %}
+
+<link rel="stylesheet" href="{{ asset('css/film.css') }}">
+<link rel="stylesheet" href="{{ asset('css/detail.css') }}">
+
+<main class="detail">
+
+    <a href="{{ path('app_film') }}" class="detail__back">
+        ‹ Tous les films
+    </a>
+
+    <section class="detail__main">
+
+        <div class="detail__poster">
+            {% if film.imageFilm %}
+                <img src="{{ asset('image/' ~ film.imageFilm) }}"
+                     alt="Affiche de {{ film.nomFilm }}">
+            {% else %}
+                <span>{{ film.nomFilm }}</span>
+            {% endif %}
+        </div>
+
+        <div class="detail__info">
+
+            <h1 class="detail__title">{{ film.nomFilm }}</h1>
+
+            {# Informations du film #}
+            <div class="detail__meta">
+                {% if film.genre %}
+                    <p><strong>Genre :</strong> {{ film.genre }}</p>
+                {% endif %}
+
+                {% if film.duree %}
+                    <p><strong>Durée :</strong> {{ film.duree }} minutes</p>
+                {% endif %}
+
+                {% if film.dateSortie %}
+                    <p>
+                        <strong>Date de sortie :</strong>
+                        {{ film.dateSortie|date('d/m/Y') }}
+                    </p>
+                {% endif %}
+            </div>
+
+            <p class="detail__synopsis">
+                {{ film.description }}
+            </p>
+
+            <div class="detail__actions">
+                <a href="#seances" class="btn btn--primary">
+                    Réserver ma place
+                </a>
+            </div>
+
+        </div>
+
+    </section>
+
+    {# ====== SÉANCES ====== #}
+
+    <section class="seances" id="seances">
+        <h2 class="section-title">Choisissez votre séance</h2>
+
+        {% if seances is not empty %}
+            <div class="seances__liste">
+                {% for seance in seances %}
+                    <article class="seances__jour">
+                        <h3>
+                            {{ seance.dateSeance|date('d/m/Y') }}
+                        </h3>
+
+                        <div class="seances__heures">
+                            <a href="#">
+                                {{ seance.horaireSeance|date('H:i') }}
+                            </a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="film-empty">
+                Aucune séance programmée pour ce film.
+            </p>
+        {% endif %}
+    </section>
+
+</main>
+
+<footer class="footer">
+    <p>© {{ 'now'|date('Y') }} GrandCiné</p>
+</footer>
+</body>
+</html>

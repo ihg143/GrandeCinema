@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Inscription - CINEMAX</title>
+
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+
+    <script type="module"
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js">
+    </script>
+    <script nomodule
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js">
+    </script>
+</head>
+<body>
+    <section>
+        {{ form_start(registrationForm) }}
+
+            <h1>Inscription</h1>
+
+            <div class="erreur">
+                {{ form_errors(registrationForm) }}
+            </div>
+
+            <div class="inputbox">
+                <ion-icon name="person-outline"></ion-icon>
+
+                {{ form_widget(registrationForm.nom, {
+                    attr: {
+                        id: 'nom',
+                        placeholder: ' ',
+                        autocomplete: 'family-name'
+                    }
+                }) }}
+
+                <label for="{{ registrationForm.nom.vars.id }}">Nom</label>
+
+                <div class="erreur">
+                    {{ form_errors(registrationForm.nom) }}
+                </div>
+            </div>
+
+            <div class="inputbox">
+                <ion-icon name="person-outline"></ion-icon>
+
+                {{ form_widget(registrationForm.prenom, {
+                    attr: {
+                        id: 'prenom',
+                        placeholder: ' ',
+                        autocomplete: 'given-name'
+                    }
+                }) }}
+
+                <label for="{{ registrationForm.prenom.vars.id }}">Prénom</label>
+
+                <div class="erreur">
+                    {{ form_errors(registrationForm.prenom) }}
+                </div>
+            </div>
+
+            <div class="inputbox">
+                <ion-icon name="mail-outline"></ion-icon>
+
+                {{ form_widget(registrationForm.email, {
+                    attr: {
+                        id: 'email',
+                        placeholder: ' ',
+                        autocomplete: 'email'
+                    }
+                }) }}
+
+                <label for="{{ registrationForm.email.vars.id }}">E-mail</label>
+
+                <div class="erreur">
+                    {{ form_errors(registrationForm.email) }}
+                </div>
+            </div>
+
+            <div class="inputbox">
+                <ion-icon name="lock-closed-outline"></ion-icon>
+
+                {{ form_widget(registrationForm.plainPassword.first, {
+                    attr: {
+                        id: 'password',
+                        placeholder: ' '
+                    }
+                }) }}
+
+                <label for="{{ registrationForm.plainPassword.first.vars.id }}">
+                    Mot de passe
+                </label>
+
+                <div class="erreur">
+                    {{ form_errors(registrationForm.plainPassword.first) }}
+                </div>
+            </div>
+
+            <div class="inputbox">
+                <ion-icon name="lock-closed-outline"></ion-icon>
+
+                {{ form_widget(registrationForm.plainPassword.second, {
+                    attr: {
+                        id: 'passwordBis',
+                        placeholder: ' '
+                    }
+                }) }}
+
+                <label for="{{ registrationForm.plainPassword.second.vars.id }}">
+                    Confirmer le mot de passe
+                </label>
+
+                <div class="erreur">
+                    {{ form_errors(registrationForm.plainPassword.second) }}
+                </div>
+            </div>
+
+            <button type="submit">S'inscrire</button>
+
+            <div class="login">
+                <p>
+                    Tu as déjà un compte ?
+                    <a href="{{ path('app_login') }}">Connexion</a>
+                </p>
+            </div>
+
+        {{ form_end(registrationForm) }}
+    </section>
+</body>
+</html>

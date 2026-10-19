@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service indisponible - Grand Cinéma</title>
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #080f18;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .erreur {
+            max-width: 500px;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #ffcc00;
+        }
+
+        p {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 20px;
+            background-color: #ffcc00;
+            color: #111;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <main class="erreur">
+        <h1>Service temporairement indisponible</h1>
+
+        <p>
+            Notre service rencontre actuellement un problème technique.
+            Veuillez réessayer dans quelques instants.
+        </p>
+
+        <a href="{{ path('app_accueil') }}">Réessayer</a>
+    </main>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GC- Le Grand Cinéma</title>
+    <link rel="stylesheet" href="{{ asset('css/accueil.css') }}">
+    <link rel="icon" type="image/png" href="{{ asset('image/logo.png') }}">
+</head>
+
+<body class="bodyaccueil">
+
+    {# ---------- Header ---------- #}
+    <header class="headeracueil">
+        <div class="header-container">
+
+            <h1 class="logo">GrandCiné</h1>
+
+            <nav>
+                <ul class="nav">
+                    <li><a href="{{ path('app_accueil') }}">Accueil</a></li>
+                    <li><a href="#affiche">À l'affiche</a></li>
+                    <li><a href="{{ path('app_film') }}">Séances</a></li>
+                    <li><a href="#tarifs">Tarifs</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+
+            <form class="search-form" action="#" method="get">
+                <input type="search" name="q" placeholder="Recherche">
+            </form>
+
+            {# Connexion ou déconnexion selon l'utilisateur #}
+               <ul class="nav">
+                   {% if app.user %}
+                       {% if is_granted('ROLE_ADMIN') %}
+                           <li><a href="{{ path('app_admin') }}">Admin</a></li>
+                       {% endif %}
+                       <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
+                       <li> <a href="{{ path('app_profil') }}"><img class="iconcompte" src="{{ asset('image/user.png') }}" alt=""></a></li>
+                   {% else %}
+                       <li><a href="{{ path('app_login') }}">Connexion</a></li>
+                   {% endif %}
+               </ul>
+
+        </div>
+    </header>
