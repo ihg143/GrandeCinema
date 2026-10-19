@@ -1,0 +1,156 @@
+{% include 'partials/header.html.twig' %}
+    <main>
+
+        {# ---------- Bannière ---------- #}
+        <section class="banniere">
+            <div class="banniere-texte">
+
+                <p class="banniere-genre">Action - Thriller | 2h05</p>
+
+                <h2 class="banniere-titre">NUIT NOIRE</h2>
+
+                <p class="banniere-resume">
+                    Une ville plongée dans le noir, une seule nuit pour
+                    retrouver la vérité. À voir sur grand écran dès mercredi.
+                </p>
+
+                <a href="#seances" class="bouton">
+                    Réserver ma place
+                </a>
+
+                <a href="#" class="bouton-contour">
+                    Bande-annonce
+                </a>
+
+            </div>
+        </section>
+
+        {# ---------- Films récupérés depuis la base de données ---------- #}
+        <section class="affiche" id="affiche">
+
+            <h2 class="titre-section">À l'affiche</h2>
+
+            <div class="liste-films">
+
+                {% for film in films|slice(0, 4) %}
+
+                    <div class="film">
+                        <a href="#">
+
+                            <div class="poster">
+                                {% if film.imageFilm %}
+                                    <img
+                                        src="{{ asset('image/' ~ film.imageFilm) }}"
+                                        alt="{{ film.nomFilm }}"
+                                    >
+                                {% else %}
+                                    <span>{{ film.nomFilm }}</span>
+                                {% endif %}
+                            </div>
+
+                            <h3>{{ film.nomFilm }}</h3>
+
+                            <p>{{ film.description }}</p>
+
+                        </a>
+                    </div>
+
+                {% else %}
+
+                    <p>Aucun film disponible pour le moment.</p>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        {# ---------- Séances ---------- #}
+        <section class="seances" id="seances">
+
+            <h2 class="titre-section">Séances du jour</h2>
+
+            <div class="ligne-seance">
+                <p class="nom-film">Nuit Noire</p>
+
+                <div class="horaires">
+                    <a href="#">14:00</a>
+                    <a href="#">17:00</a>
+                    <a href="#">20:00</a>
+                    <a href="#">22:30</a>
+                </div>
+            </div>
+
+            <div class="ligne-seance">
+                <p class="nom-film">Le Dernier Train</p>
+
+                <div class="horaires">
+                    <a href="#">15:15</a>
+                    <a href="#">18:00</a>
+                    <a href="#">20:45</a>
+                </div>
+            </div>
+
+            <div class="ligne-seance">
+                <p class="nom-film">Ombres</p>
+
+                <div class="horaires">
+                    <a href="#">19:30</a>
+                    <a href="#">21:50</a>
+                </div>
+            </div>
+
+            <div class="ligne-seance">
+                <p class="nom-film">Sous le Soleil</p>
+
+                <div class="horaires">
+                    <a href="#">14:30</a>
+                    <a href="#">16:30</a>
+                </div>
+            </div>
+
+        </section>
+
+        {# ---------- Tarifs ---------- #}
+        <section class="tarifs" id="tarifs">
+
+            <h2 class="titre-section">Tarifs</h2>
+
+            <div class="liste-tarifs">
+
+                <div class="tarif">
+                    <h3>Plein tarif</h3>
+                    <p class="prix">10,50 €</p>
+                </div>
+
+                <div class="tarif">
+                    <h3>Tarif réduit</h3>
+                    <p class="prix">8,00 €</p>
+                </div>
+
+                <div class="tarif">
+                    <h3>Moins de 14 ans</h3>
+                    <p class="prix">5,50 €</p>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    {# ---------- Footer ---------- #}
+    <footer class="footer" id="contact">
+
+        <p class="footer-logo">CINEMAX</p>
+
+        <p>12 rue du Cinéma - 00000 Ville</p>
+
+        <p>Tél : 01 23 45 67 89 - contact@cinemax.fr</p>
+
+        <p>Ouvert tous les jours de 13h à 23h</p>
+
+    </footer>
+
+</body>
+</html>
