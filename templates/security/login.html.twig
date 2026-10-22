@@ -9,20 +9,28 @@
 
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 
 <body>
     <section>
         <form action="{{ path('app_login') }}" method="post">
             <h1>Connexion</h1>
+
             {% for message in app.flashes('success') %}
-               <div class="message-success">
+                <div class="message-success">
                     {{ message }}
-               </div>
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('error') %}
+                <p class="erreur">{{ message }}</p>
             {% endfor %}
 
             {% if error %}
-                <p class="erreur">Email ou mot de passe incorrect.</p>
+                <p class="erreur">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </p>
             {% endif %}
 
             <div class="inputbox">
@@ -64,14 +72,55 @@
                 <a href="#">Mot de passe oublié ?</a>
             </div>
 
+            {# CAPTCHA Cloudflare #}
+            <div class="captcha">
+                <div
+                    class="cf-turnstile"
+                    data-sitekey="{{ turnstile_site_key }}"
+                ></div>
+            </div>
+
             <button type="submit">Se connecter</button>
 
             <div class="register">
-                <p>Pas encore de compte ?
-                   <a href="{{ path('app_register') }}">S'inscrire</a>
+                <p>
+                    Pas encore de compte ?
+                    <a href="{{ path('app_register') }}">S'inscrire</a>
                 </p>
             </div>
         </form>
     </section>
 </body>
+    <script>
+        async function verifierConfirmation() {
+            try {
+                const response = await fetch(
+                    "{{ path('app_verify_email_status') }}"
+                );
+
+                const data = await response.json();
+
+                if (data.confirmed) {
+                    let message = document.querySelector('.message-success');
+
+                    if (!message) {
+                        message = document.createElement('div');
+                        message.className = 'message-success';
+
+                        const form = document.querySelector('form');
+                        form.insertBefore(
+                            message,
+                            form.querySelector('h1').nextSibling
+                        );
+                    }
+
+                    message.textContent = data.message;
+                }
+            } catch (error) {
+                console.error('Erreur de vérification :', error);
+            }
+        }
+
+        setInterval(verifierConfirmation, 3000);
+    </script>
 </html>

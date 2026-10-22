@@ -1,0 +1,122 @@
+
+{% block body %}
+{% include 'partials/header.html.twig' %}
+<link rel="stylesheet" href="{{ asset('css/reservation.css') }}">
+
+<div class="reservation">
+    <header class="reservation__header">
+        <h1>Réserver vos places</h1>
+        <p>Choisissez vos sièges pour votre prochaine séance.</p>
+    </header>
+
+    <section class="reservation__infos">
+        <h2>{{ seance.film.nomFilm }}</h2>
+
+        <p>
+            <strong>Date :</strong>
+            {{ seance.dateSeance|date('d/m/Y') }}
+        </p>
+
+        <p>
+            <strong>Horaire :</strong>
+            {{ seance.horaireSeance|date('H:i') }}
+        </p>
+
+        <p>
+            <strong>Salle :</strong>
+            {{ seance.salle }}
+        </p>
+    </section>
+
+    <section class="reservation__selection">
+        <h2>Choisissez vos places</h2>
+
+           <div class="reservation__legende">
+               <span>
+                   <i class="place place--libre place--legende"></i>
+                   Libre
+               </span>
+
+               <span>
+                   <i class="place place--selectionnee place--legende"></i>
+                   Sélectionnée
+               </span>
+
+               <span>
+                   <i class="place place--reservee place--legende"></i>
+                   Réservée
+               </span>
+           </div>
+
+        <div class="ecran">ÉCRAN</div>
+
+        <div class="places">
+            {% for place in places %}
+                {% set reservee = place.idPlace in idsPlacesReservees %}
+
+                <button
+                    type="button"
+                    class="place {{ reservee ? 'place--reservee' : 'place--libre' }}"
+                    {% if reservee %}disabled{% endif %}
+                    data-id="{{ place.idPlace }}"
+                    aria-label="Place {{ place.numeroPlace }}{% if reservee %}, réservée{% endif %}"
+                    title="Place {{ place.numeroPlace }}"
+                >
+                    {{ place.numeroPlace }}
+                </button>
+            {% else %}
+                <p>Aucune place disponible dans cette salle.</p>
+            {% endfor %}
+        </div>
+
+        <p class="reservation__aide">
+            Cliquez sur une place libre pour la sélectionner.
+        </p>
+
+        <div class="reservation__resume">
+            <p>Places sélectionnées : <strong id="nombre-places">0</strong></p>
+            <p>Total : <strong id="prix-total">0,00 €</strong></p>
+            <button type="button" id="confirmer-reservation" disabled>
+                Continuer
+            </button>
+        </div>
+    </section>
+</div>
+
+<script>
+    const places = document.querySelectorAll('.place--libre');
+    const nombrePlaces = document.getElementById('nombre-places');
+    const prixTotal = document.getElementById('prix-total');
+    const boutonConfirmer = document.getElementById('confirmer-reservation');
+
+    const placesSelectionnees = new Set();
+    const prixPlace = 10;
+
+    places.forEach((place) => {
+        place.addEventListener('click', () => {
+            const id = place.dataset.id;
+
+            if (placesSelectionnees.has(id)) {
+                placesSelectionnees.delete(id);
+                place.classList.remove('place--selectionnee');
+                place.classList.add('place--libre');
+            } else {
+                placesSelectionnees.add(id);
+                place.classList.remove('place--libre');
+                place.classList.add('place--selectionnee');
+            }
+
+            nombrePlaces.textContent = placesSelectionnees.size;
+            prixTotal.textContent =
+                (placesSelectionnees.size * prixPlace).toFixed(2)
+                    .replace('.', ',') + ' €';
+
+            boutonConfirmer.disabled = placesSelectionnees.size === 0;
+        });
+    });
+
+    boutonConfirmer.addEventListener('click', () => {
+        alert('La sélection visuelle fonctionne. L’enregistrement de la réservation reste à développer.');
+    });
+</script>
+{% endblock %}

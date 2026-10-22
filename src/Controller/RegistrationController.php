@@ -4,10 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Utilisateur;
 use App\Form\RegistrationFormType;
+use App\Security\EmailVerifier;
+use App\Service\TurnstileService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -17,7 +21,9 @@ class RegistrationController extends AbstractController
     public function register(
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        TurnstileService $turnstileService,
+        EmailVerifier $emailVerifier
     ): Response {
         $user = new Utilisateur();
 
@@ -25,6 +31,19 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $token = $request->request->getString(
+                'cf-turnstile-response'
+            );
+
+            if (!$turnstileService->verify($token)) {
+                $this->addFlash(
+                    'error',
+                    'La vérification de sécurité a échoué. Veuillez réessayer.'
+                );
+
+                return $this->redirectToRoute('app_register');
+            }
+
             $plainPassword = $form->get('plainPassword')->getData();
 
             // Hacher le mot de passe
@@ -32,14 +51,44 @@ class RegistrationController extends AbstractController
                 $userPasswordHasher->hashPassword($user, $plainPassword)
             );
 
-            // Enregistrer l'utilisateur
+            // Le compte reste non vérifié jusqu'au clic sur le lien
+            $user->setIsVerified(false);
+
+            // Enregistrer l'utilisateur pour obtenir son identifiant
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // Rediriger vers la connexion
-        $this->addFlash('success', 'Votre compte a été créé. Vous pouvez maintenant vous connecter.');
+            // Préparer l'e-mail de confirmation
+            $email = (new TemplatedEmail())
+                ->from('confirmation@grandcine.test')
+                ->to($user->getEmail())
+                ->subject('Confirmez votre adresse e-mail - GrandCiné')
+                ->htmlTemplate('registration/confirmation_email.html.twig')
+                ->context([
+                    'prenom' => $user->getPrenom(),
+                ]);
 
-        return $this->redirectToRoute('app_login');
+            try {
+                $emailVerifier->sendEmailConfirmation(
+                    'app_verify_email',
+                    $user,
+                    $email
+                );
+            } catch (TransportExceptionInterface $exception) {
+                $this->addFlash(
+                    'error',
+                    'Votre compte a été créé, mais l’e-mail n’a pas pu être envoyé. Réessayez plus tard.'
+                );
+
+                return $this->redirectToRoute('app_login');
+            }
+
+            $this->addFlash(
+                'success',
+                'Votre compte a été créé. Consultez votre boîte mail pour confirmer votre adresse.'
+            );
+
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('registration/register.html.twig', [

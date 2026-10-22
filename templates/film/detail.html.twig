@@ -1,6 +1,4 @@
-
 {% include 'partials/header.html.twig' %}
-
 <link rel="stylesheet" href="{{ asset('css/film.css') }}">
 <link rel="stylesheet" href="{{ asset('css/detail.css') }}">
 
@@ -49,7 +47,7 @@
 
             <div class="detail__actions">
                 <a href="#seances" class="btn btn--primary">
-                    Réserver ma place
+                    Choisir ma séance
                 </a>
             </div>
 
@@ -71,8 +69,10 @@
                         </h3>
 
                         <div class="seances__heures">
-                            <a href="#">
+                            <a href="{{ path('app_reservation', {id: seance.idSeance}) }}"
+                               class="btn btn--primary">
                                 {{ seance.horaireSeance|date('H:i') }}
+                                — Réserver ma place
                             </a>
                         </div>
                     </article>
@@ -90,5 +90,6 @@
 <footer class="footer">
     <p>© {{ 'now'|date('Y') }} GrandCiné</p>
 </footer>
+
 </body>
 </html>

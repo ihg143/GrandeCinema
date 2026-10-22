@@ -21,6 +21,7 @@ class SecurityController extends AbstractController
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error,
+            'turnstile_site_key' => $this->getParameter('turnstile_site_key'),
         ]);
     }
 

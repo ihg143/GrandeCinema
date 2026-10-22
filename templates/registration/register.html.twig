@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Inscription - CINEMAX</title>
+    <title>Inscription - GrandCiné</title>
 
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 
@@ -14,6 +15,9 @@
     <script nomodule
         src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js">
     </script>
+
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        async defer></script>
 </head>
 <body>
     <section>
@@ -21,13 +25,16 @@
 
             <h1>Inscription</h1>
 
+            {% for message in app.flashes('error') %}
+                <div class="erreur">{{ message }}</div>
+            {% endfor %}
+
             <div class="erreur">
                 {{ form_errors(registrationForm) }}
             </div>
 
             <div class="inputbox">
                 <ion-icon name="person-outline"></ion-icon>
-
                 {{ form_widget(registrationForm.nom, {
                     attr: {
                         id: 'nom',
@@ -35,17 +42,12 @@
                         autocomplete: 'family-name'
                     }
                 }) }}
-
                 <label for="{{ registrationForm.nom.vars.id }}">Nom</label>
-
-                <div class="erreur">
-                    {{ form_errors(registrationForm.nom) }}
-                </div>
+                <div class="erreur">{{ form_errors(registrationForm.nom) }}</div>
             </div>
 
             <div class="inputbox">
                 <ion-icon name="person-outline"></ion-icon>
-
                 {{ form_widget(registrationForm.prenom, {
                     attr: {
                         id: 'prenom',
@@ -53,17 +55,12 @@
                         autocomplete: 'given-name'
                     }
                 }) }}
-
                 <label for="{{ registrationForm.prenom.vars.id }}">Prénom</label>
-
-                <div class="erreur">
-                    {{ form_errors(registrationForm.prenom) }}
-                </div>
+                <div class="erreur">{{ form_errors(registrationForm.prenom) }}</div>
             </div>
 
             <div class="inputbox">
                 <ion-icon name="mail-outline"></ion-icon>
-
                 {{ form_widget(registrationForm.email, {
                     attr: {
                         id: 'email',
@@ -71,28 +68,21 @@
                         autocomplete: 'email'
                     }
                 }) }}
-
                 <label for="{{ registrationForm.email.vars.id }}">E-mail</label>
-
-                <div class="erreur">
-                    {{ form_errors(registrationForm.email) }}
-                </div>
+                <div class="erreur">{{ form_errors(registrationForm.email) }}</div>
             </div>
 
             <div class="inputbox">
                 <ion-icon name="lock-closed-outline"></ion-icon>
-
                 {{ form_widget(registrationForm.plainPassword.first, {
                     attr: {
                         id: 'password',
                         placeholder: ' '
                     }
                 }) }}
-
                 <label for="{{ registrationForm.plainPassword.first.vars.id }}">
                     Mot de passe
                 </label>
-
                 <div class="erreur">
                     {{ form_errors(registrationForm.plainPassword.first) }}
                 </div>
@@ -100,20 +90,24 @@
 
             <div class="inputbox">
                 <ion-icon name="lock-closed-outline"></ion-icon>
-
                 {{ form_widget(registrationForm.plainPassword.second, {
                     attr: {
                         id: 'passwordBis',
                         placeholder: ' '
                     }
                 }) }}
-
                 <label for="{{ registrationForm.plainPassword.second.vars.id }}">
                     Confirmer le mot de passe
                 </label>
-
                 <div class="erreur">
                     {{ form_errors(registrationForm.plainPassword.second) }}
+                </div>
+            </div>
+
+            {# CAPTCHA Cloudflare #}
+            <div class="captcha">
+                <div class="cf-turnstile"
+                     data-sitekey="0x4AAAAAAFfb7HnTItpdlHeP">
                 </div>
             </div>
 
