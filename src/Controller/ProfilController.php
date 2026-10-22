@@ -3,7 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Utilisateur;
+use App\Repository\UtilisateurRepository;
+use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,26 +16,99 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class ProfilController extends AbstractController
 {
-    #[Route('/profil', name: 'app_profil')]
+    #[Route('/profil', name: 'app_profil', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
     public function index(
         Request $request,
         EntityManagerInterface $entityManager,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        UtilisateurRepository $utilisateurRepository,
+        EmailVerifier $emailVerifier
     ): Response {
         /** @var Utilisateur $user */
         $user = $this->getUser();
 
         // Modification des informations personnelles
         if ($request->request->has('update_profile')) {
-            $user->setNom((string) $request->request->get('nom'));
-            $user->setPrenom((string) $request->request->get('prenom'));
-            $user->setEmail((string) $request->request->get('email'));
+            $nom = trim((string) $request->request->get('nom'));
+            $prenom = trim((string) $request->request->get('prenom'));
+            $nouvelEmail = trim((string) $request->request->get('email'));
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+            if ($nom === '' || $prenom === '') {
+                $this->addFlash(
+                    'error',
+                    'Le nom et le prénom sont obligatoires.'
+                );
 
-            $this->addFlash('success', 'Profil mis à jour avec succès !');
+                return $this->redirectToRoute('app_profil');
+            }
+
+            if (!filter_var($nouvelEmail, FILTER_VALIDATE_EMAIL)) {
+                $this->addFlash(
+                    'error',
+                    'Veuillez saisir une adresse e-mail valide.'
+                );
+
+                return $this->redirectToRoute('app_profil');
+            }
+
+            $user->setNom($nom);
+            $user->setPrenom($prenom);
+
+            // Si l'adresse est différente, on demande une confirmation
+            if ($nouvelEmail !== $user->getEmail()) {
+                $existingUser = $utilisateurRepository->findOneBy([
+                    'email' => $nouvelEmail,
+                ]);
+
+                if ($existingUser !== null && $existingUser->getIdUser() !== $user->getIdUser()) {
+                    $this->addFlash(
+                        'error',
+                        'Cette adresse e-mail est déjà utilisée.'
+                    );
+
+                    return $this->redirectToRoute('app_profil');
+                }
+
+                $user->setEmailEnAttente($nouvelEmail);
+
+                $entityManager->flush();
+
+                try {
+                    $email = (new TemplatedEmail())
+                        ->from('confirmation@grandcine.test')
+                        ->to($nouvelEmail)
+                        ->subject('Confirmez votre nouvelle adresse e-mail - GrandCiné')
+                        ->htmlTemplate('registration/confirmation_email_change.html.twig')
+                        ->context([
+                            'user' => $user,
+                            'newEmail' => $nouvelEmail,
+                        ]);
+
+                    $emailVerifier->sendEmailChangeConfirmation(
+                        'app_confirm_change_email',
+                        $user,
+                        $email
+                    );
+
+                    $this->addFlash(
+                        'success',
+                        'Un lien de confirmation a été envoyé à votre nouvelle adresse e-mail. Votre ancienne adresse reste active jusqu’à la confirmation.'
+                    );
+                } catch (\Throwable $exception) {
+                    $this->addFlash(
+                        'error',
+                        'Impossible d’envoyer l’e-mail de confirmation. Vérifiez la configuration de Mailtrap.'
+                    );
+                }
+            } else {
+                $entityManager->flush();
+
+                $this->addFlash(
+                    'success',
+                    'Votre profil a été mis à jour.'
+                );
+            }
 
             return $this->redirectToRoute('app_profil');
         }
@@ -44,20 +120,34 @@ final class ProfilController extends AbstractController
             $confirmPassword = (string) $request->request->get('confirm_password');
 
             if (!$passwordHasher->isPasswordValid($user, $currentPassword)) {
-                $this->addFlash('error', 'Le mot de passe actuel est incorrect.');
+                $this->addFlash(
+                    'error',
+                    'Le mot de passe actuel est incorrect.'
+                );
             } elseif ($newPassword === '') {
-                $this->addFlash('error', 'Le nouveau mot de passe ne peut pas être vide.');
+                $this->addFlash(
+                    'error',
+                    'Le nouveau mot de passe ne peut pas être vide.'
+                );
             } elseif ($newPassword !== $confirmPassword) {
-                $this->addFlash('error', 'Les nouveaux mots de passe ne correspondent pas.');
+                $this->addFlash(
+                    'error',
+                    'Les nouveaux mots de passe ne correspondent pas.'
+                );
             } else {
-                $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
+                $hashedPassword = $passwordHasher->hashPassword(
+                    $user,
+                    $newPassword
+                );
 
                 $user->setMdp($hashedPassword);
 
-                $entityManager->persist($user);
                 $entityManager->flush();
 
-                $this->addFlash('success', 'Mot de passe mis à jour avec succès !');
+                $this->addFlash(
+                    'success',
+                    'Mot de passe mis à jour avec succès !'
+                );
             }
 
             return $this->redirectToRoute('app_profil');

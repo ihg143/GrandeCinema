@@ -23,6 +23,9 @@ class Seance
     #[ORM\Column(name: 'horaireSeance', type: Types::TIME_MUTABLE)]
     private ?\DateTime $horaireSeance = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $salle = null;
+
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'idFilm', referencedColumnName: 'idFilm', nullable: false)]
     private ?Film $film = null;
@@ -51,6 +54,7 @@ class Seance
     public function setDateSeance(\DateTime $dateSeance): static
     {
         $this->dateSeance = $dateSeance;
+
         return $this;
     }
 
@@ -62,6 +66,19 @@ class Seance
     public function setHoraireSeance(\DateTime $horaireSeance): static
     {
         $this->horaireSeance = $horaireSeance;
+
+        return $this;
+    }
+
+    public function getSalle(): ?int
+    {
+        return $this->salle;
+    }
+
+    public function setSalle(?int $salle): static
+    {
+        $this->salle = $salle;
+
         return $this;
     }
 
@@ -73,6 +90,7 @@ class Seance
     public function setFilm(?Film $film): static
     {
         $this->film = $film;
+
         return $this;
     }
 

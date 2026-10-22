@@ -2,18 +2,19 @@
 
 namespace App\Entity;
 
+use App\Repository\ReservationPlaceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: ReservationPlaceRepository::class)]
 #[ORM\Table(name: 'ReservationPlaces')]
 #[ORM\UniqueConstraint(
-    name: 'idPlace',
+    name: 'uniq_place_seance',
     columns: ['idPlace', 'idSeance']
 )]
 class ReservationPlace
 {
     #[ORM\Id]
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'reservationPlaces')]
     #[ORM\JoinColumn(
         name: 'idReservation',
         referencedColumnName: 'idReservation',
@@ -46,6 +47,7 @@ class ReservationPlace
     public function setReservation(?Reservation $reservation): static
     {
         $this->reservation = $reservation;
+
         return $this;
     }
 
@@ -57,6 +59,7 @@ class ReservationPlace
     public function setPlace(?Place $place): static
     {
         $this->place = $place;
+
         return $this;
     }
 
@@ -68,6 +71,7 @@ class ReservationPlace
     public function setSeance(?Seance $seance): static
     {
         $this->seance = $seance;
+
         return $this;
     }
 }

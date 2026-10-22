@@ -1,0 +1,27 @@
+
+<h1>Bienvenue chez GrandCiné !</h1>
+
+<p>
+    <img
+        src="{{ absolute_url(asset('image/logo.png')) }}"
+        alt="Logo GrandCiné"
+        width="180"
+    >
+</p>
+
+<p>Bonjour {{ prenom }},</p>
+
+<p>Merci pour votre inscription sur GrandCiné.</p>
+
+<p>Pour confirmer votre adresse e-mail, cliquez sur le bouton suivant :</p>
+
+<p>
+    <a href="{{ signedUrl }}"
+       style="display:inline-block; background-color:#ffcc00; color:#121212; padding:12px 20px; text-decoration:none; font-weight:bold; border-radius:5px;">
+        Confirmer mon adresse e-mail
+    </a>
+</p>
+
+<p>Ce lien est temporaire.</p>
+
+<p>À bientôt chez GrandCiné !</p>
