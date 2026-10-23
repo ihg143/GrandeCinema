@@ -1,4 +1,3 @@
-
 {% block body %}
 {% include 'partials/header.html.twig' %}
 <link rel="stylesheet" href="{{ asset('css/reservation.css') }}">
@@ -8,6 +7,15 @@
         <h1>Réserver vos places</h1>
         <p>Choisissez vos sièges pour votre prochaine séance.</p>
     </header>
+
+    {# Messages flash envoyés par le contrôleur #}
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash flash--{{ type }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
 
     <section class="reservation__infos">
         <h2>{{ seance.film.nomFilm }}</h2>
@@ -31,66 +39,104 @@
     <section class="reservation__selection">
         <h2>Choisissez vos places</h2>
 
-           <div class="reservation__legende">
-               <span>
-                   <i class="place place--libre place--legende"></i>
-                   Libre
-               </span>
+        <div class="reservation__legende">
+            <span>
+                <i class="place place--libre place--legende"></i>
+                Libre
+            </span>
 
-               <span>
-                   <i class="place place--selectionnee place--legende"></i>
-                   Sélectionnée
-               </span>
+            <span>
+                <i class="place place--selectionnee place--legende"></i>
+                Sélectionnée
+            </span>
 
-               <span>
-                   <i class="place place--reservee place--legende"></i>
-                   Réservée
-               </span>
-           </div>
+            <span>
+                <i class="place place--reservee place--legende"></i>
+                Réservée
+            </span>
+        </div>
 
-        <div class="ecran">ÉCRAN</div>
+        {% set seanceId = app.request.attributes.get('id') %}
 
-        <div class="places">
-            {% for place in places %}
-                {% set reservee = place.idPlace in idsPlacesReservees %}
+        <form
+            method="post"
+            action="{{ path('app_reservation', { id: seanceId }) }}"
+            id="form-reservation"
+        >
+            <input
+                type="hidden"
+                name="_token"
+                value="{{ csrf_token('reserver_places_' ~ seanceId) }}"
+            >
 
-                <button
-                    type="button"
-                    class="place {{ reservee ? 'place--reservee' : 'place--libre' }}"
-                    {% if reservee %}disabled{% endif %}
-                    data-id="{{ place.idPlace }}"
-                    aria-label="Place {{ place.numeroPlace }}{% if reservee %}, réservée{% endif %}"
-                    title="Place {{ place.numeroPlace }}"
-                >
-                    {{ place.numeroPlace }}
+            {# Les champs places[] sont générés par le JavaScript #}
+            <div id="places-inputs"></div>
+
+            <div class="ecran">ÉCRAN</div>
+
+            <div class="places">
+                {% for place in places %}
+                    {% set reservee = place.idPlace in idsPlacesReservees %}
+
+                    <button
+                        type="button"
+                        class="place {{ reservee ? 'place--reservee' : 'place--libre' }}"
+                        {% if reservee %}disabled{% endif %}
+                        data-id="{{ place.idPlace }}"
+                        aria-label="Place {{ place.numeroPlace }}{% if reservee %}, réservée{% endif %}"
+                        title="Place {{ place.numeroPlace }}"
+                    >
+                        {{ place.numeroPlace }}
+                    </button>
+                {% else %}
+                    <p>Aucune place disponible dans cette salle.</p>
+                {% endfor %}
+            </div>
+
+            <p class="reservation__aide">
+                Cliquez sur une place libre pour la sélectionner.
+            </p>
+
+            <div class="reservation__resume">
+                <p>Places sélectionnées : <strong id="nombre-places">0</strong></p>
+                <p>Total : <strong id="prix-total">0,00 €</strong></p>
+                <button type="submit" id="confirmer-reservation" disabled>
+                    Confirmer la réservation
                 </button>
-            {% else %}
-                <p>Aucune place disponible dans cette salle.</p>
-            {% endfor %}
-        </div>
-
-        <p class="reservation__aide">
-            Cliquez sur une place libre pour la sélectionner.
-        </p>
-
-        <div class="reservation__resume">
-            <p>Places sélectionnées : <strong id="nombre-places">0</strong></p>
-            <p>Total : <strong id="prix-total">0,00 €</strong></p>
-            <button type="button" id="confirmer-reservation" disabled>
-                Continuer
-            </button>
-        </div>
+            </div>
+        </form>
     </section>
 </div>
 
 <script>
-    const places = document.querySelectorAll('.place--libre');
+    const places = document.querySelectorAll('.place--libre[data-id]');
     const nombrePlaces = document.getElementById('nombre-places');
     const prixTotal = document.getElementById('prix-total');
     const boutonConfirmer = document.getElementById('confirmer-reservation');
+    const conteneurInputs = document.getElementById('places-inputs');
 
     const placesSelectionnees = new Set();
     const prixPlace = 10;
+
+    function mettreAJourFormulaire() {
+        // Regénère les champs cachés places[] envoyés au contrôleur
+        conteneurInputs.innerHTML = '';
+
+        placesSelectionnees.forEach((id) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'places[]';
+            input.value = id;
+            conteneurInputs.appendChild(input);
+        });
+
+        nombrePlaces.textContent = placesSelectionnees.size;
+        prixTotal.textContent =
+            (placesSelectionnees.size * prixPlace).toFixed(2)
+                .replace('.', ',') + ' €';
+
+        boutonConfirmer.disabled = placesSelectionnees.size === 0;
+    }
 
     places.forEach((place) => {
         place.addEventListener('click', () => {
@@ -106,17 +152,8 @@
                 place.classList.add('place--selectionnee');
             }
 
-            nombrePlaces.textContent = placesSelectionnees.size;
-            prixTotal.textContent =
-                (placesSelectionnees.size * prixPlace).toFixed(2)
-                    .replace('.', ',') + ' €';
-
-            boutonConfirmer.disabled = placesSelectionnees.size === 0;
+            mettreAJourFormulaire();
         });
-    });
-
-    boutonConfirmer.addEventListener('click', () => {
-        alert('La sélection visuelle fonctionne. L’enregistrement de la réservation reste à développer.');
     });
 </script>
 {% endblock %}
