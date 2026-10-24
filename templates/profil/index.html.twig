@@ -13,7 +13,6 @@
 {% set nom = app.user.nom %}
 {% set email = app.user.email %}
 
-{# Le header sera ajouté ici plus tard : {% include 'partials/_header.html.twig' %} #}
 {% include 'partials/header.html.twig' %}
 <main class="profile">
 
@@ -26,7 +25,8 @@
             <h1 class="profile-name">{{ prenom }} {{ nom }}</h1>
             <p class="profile-email">{{ email }}</p>
         </div>
-        <a href="{{ path('app_logout') }}" class="btn btn-outline">Déconnexion</a>
+         <li><a href="{{ path('app_logout', {'_csrf_token': csrf_token('logout')}) }}" class="btn-logout" data-turbo-prefetch="false">Déconnexion</a></li>
+
     </section>
 
     <div class="profile-layout">
@@ -40,19 +40,19 @@
 
         <div class="profile-content">
 
+            {# ===== Messages (succès / erreur) : alignés avec les blocs ===== #}
+            {% for type, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="flash flash-{{ type }}">{{ message }}</div>
+                {% endfor %}
+            {% endfor %}
+
             {# ===== Informations personnelles ===== #}
             <section id="infos" class="profile-block">
                 <h2 class="block-title">Mes informations</h2>
-                    {# ===== Messages (succès / erreur) ===== #}
-                 {% for type, messages in app.flashes %}
-                    {% for message in messages %}
-                    <div class="flash flash-{{ type }}">{{ message }}</div>
-                    {% endfor %}
-                 {% endfor %}
                 <p class="profile-info">Vous pouvez modifier vos informations personnelles ci-dessous.</p>
 
-
-                <form method="post" action="#" class="profile-form">
+                <form method="post" action="{{ path('app_profil') }}" class="profile-form">
                     <div class="form-row">
                         <div class="form-group">
                             <label for="prenom">Prénom</label>
@@ -77,25 +77,53 @@
             <section id="reservations" class="profile-block">
                 <h2 class="block-title">Mes réservations</h2>
 
-                {% if reservations is defined and reservations|length > 0 %}
+                {% if reservationsDetails|length > 0 %}
                     <div class="reservation-list">
-                        {% for reservation in reservations %}
+                        {% for item in reservationsDetails %}
+                            {% set seance = item.reservation.seance %}
+                            {% set film = seance.film %}
+                            {% set nbPlaces = item.places|length %}
+
                             <article class="reservation-card">
-                                <img src="{{ asset('images/films/' ~ reservation.seance.film.affiche) }}"
-                                     alt="Affiche de {{ reservation.seance.film.titre }}"
-                                     class="reservation-poster">
+                                {% if film.affiche is defined and film.affiche %}
+                                    <img src="{{ asset('images/films/' ~ film.affiche) }}"
+                                         alt="Affiche de {{ film.nomFilm }}"
+                                         class="reservation-poster">
+                                {% endif %}
 
                                 <div class="reservation-info">
-                                    <h3 class="reservation-title">{{ reservation.seance.film.titre }}</h3>
+                                    <h3 class="reservation-title">{{ film.nomFilm }}</h3>
+
                                     <p class="reservation-date">
-                                        {{ reservation.seance.date|date('d/m/Y') }} à {{ reservation.seance.date|date('H:i') }}
+                                        {{ seance.dateSeance|date('d/m/Y') }}
+                                        à {{ seance.horaireSeance|date('H:i') }}
                                     </p>
+
+                                    <p class="reservation-salle">Salle {{ seance.salle }}</p>
+
                                     <p class="reservation-places">
-                                        {{ reservation.nombrePlaces }} place{{ reservation.nombrePlaces > 1 ? 's' : '' }}
+                                        {{ nbPlaces }} place{{ nbPlaces > 1 ? 's' : '' }} :
+                                        {% for rp in item.places %}
+                                            {{ rp.place.numeroPlace }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </p>
+
+                                    <p class="reservation-total">
+                                        Total : {{ item.reservation.total|number_format(2, ',', ' ') }} €
+                                    </p>
+
+                                    <p class="reservation-statut">
+                                        {{ item.reservation.payee ? 'Payée' : 'En attente de paiement' }}
                                     </p>
                                 </div>
 
-                                <a href="#" class="btn btn-outline">Voir le billet</a>
+                                {% if item.reservation.payee %}
+                                    <a href="{{ path('app_billet', { id: item.reservation.idReservation }) }}"
+                                       target="_blank" class="btn btn-outline">Voir le billet</a>
+                                {% else %}
+                                    <a href="{{ path('app_paiement', { id: item.reservation.idReservation }) }}"
+                                       class="btn btn-yellow">Payer</a>
+                                {% endif %}
                             </article>
                         {% endfor %}
                     </div>
@@ -111,7 +139,7 @@
             <section id="password" class="profile-block">
                 <h2 class="block-title">Mot de passe</h2>
 
-                <form method="post" action="#" class="profile-form">
+                <form method="post" action="{{ path('app_profil') }}" class="profile-form">
                     <div class="form-group">
                         <label for="ancien">Mot de passe actuel</label>
                         <input type="password" id="ancien" name="current_password">

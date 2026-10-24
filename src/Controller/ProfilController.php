@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Utilisateur;
+use App\Repository\ReservationPlaceRepository;
+use App\Repository\ReservationRepository;
 use App\Repository\UtilisateurRepository;
 use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,7 +25,9 @@ final class ProfilController extends AbstractController
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher,
         UtilisateurRepository $utilisateurRepository,
-        EmailVerifier $emailVerifier
+        EmailVerifier $emailVerifier,
+        ReservationRepository $reservationRepository,
+        ReservationPlaceRepository $reservationPlaceRepository
     ): Response {
         /** @var Utilisateur $user */
         $user = $this->getUser();
@@ -153,8 +157,24 @@ final class ProfilController extends AbstractController
             return $this->redirectToRoute('app_profil');
         }
 
+        // Chargement des réservations de l'utilisateur et de leurs places
+        $reservations = $reservationRepository->findBy(
+            ['utilisateur' => $user]
+        );
+
+        $reservationsDetails = [];
+
+        foreach ($reservations as $reservation) {
+            $reservationsDetails[] = [
+                'reservation' => $reservation,
+                'places' => $reservationPlaceRepository->findBy([
+                    'reservation' => $reservation,
+                ]),
+            ];
+        }
+
         return $this->render('profil/index.html.twig', [
-            'reservations' => [],
+            'reservationsDetails' => $reservationsDetails,
         ]);
     }
 }
