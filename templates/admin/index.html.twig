@@ -1,4 +1,3 @@
-
 {% extends 'base.html.twig' %}
 
 {% block title %}Administration - Grand Cinéma{% endblock %}
@@ -17,7 +16,7 @@
 
         {# ===== BOUTONS DE NAVIGATION ===== #}
         <nav class="admin-navigation">
-           <a href="{{ path('admin_film_index') }}" class="admin-nav-button">Gestion des films</a>
+            <a href="{{ path('admin_film_index') }}" class="admin-nav-button">Gestion des films</a>
             <a href="#seances" class="admin-nav-button">Gestion des séances</a>
             <a href="#reservations" class="admin-nav-button">Gestion des réservations</a>
         </nav>
@@ -28,7 +27,7 @@
             <article class="stat-card">
                 <p class="stat-label">Films à l'affiche</p>
                 <p class="stat-number">{{ stats.nbFilms }}</p>
-                <a href="#films" class="stat-link">Gérer les films</a>
+                <a href="{{ path('admin_film_index') }}" class="stat-link">Gérer les films</a>
             </article>
 
             <article class="stat-card">
@@ -39,7 +38,7 @@
             </article>
 
             <article class="stat-card">
-                <p class="stat-label">Réservations</p>
+                <p class="stat-label">Réservations payées</p>
                 <p class="stat-number">{{ stats.nbReservations }}</p>
                 <a href="#reservations" class="stat-link">Suivre les réservations</a>
             </article>
@@ -204,6 +203,7 @@
                                 <th>Film</th>
                                 <th>Places</th>
                                 <th>Date</th>
+                                <th>Statut</th>
                             </tr>
                         </thead>
 
@@ -214,6 +214,7 @@
                                     <td>{{ resa.film }}</td>
                                     <td>{{ resa.places }}</td>
                                     <td>{{ resa.date }}</td>
+                                    <td>{{ resa.statut }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
