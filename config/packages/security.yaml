@@ -18,8 +18,10 @@ security:
             provider: users_in_database
             custom_authenticators:
                 - App\Security\TurnstileLoginAuthenticator
+            entry_point: App\Security\TurnstileLoginAuthenticator
             logout:
                 path: app_logout
+                enable_csrf: true
 
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }

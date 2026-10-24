@@ -17,9 +17,10 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 
-class TurnstileLoginAuthenticator extends AbstractAuthenticator
+class TurnstileLoginAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
     public function __construct(
         private TurnstileService $turnstileService,
@@ -99,6 +100,17 @@ class TurnstileLoginAuthenticator extends AbstractAuthenticator
             $request->request->getString('_username')
         );
 
+        return new RedirectResponse(
+            $this->urlGenerator->generate('app_login')
+        );
+    }
+
+    /**
+     * Appelé quand un utilisateur non connecté accède à une page protégée :
+     * on le redirige vers la page de connexion au lieu d'afficher une erreur 401.
+     */
+    public function start(Request $request, ?AuthenticationException $authException = null): Response
+    {
         return new RedirectResponse(
             $this->urlGenerator->generate('app_login')
         );

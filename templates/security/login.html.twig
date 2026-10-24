@@ -27,11 +27,9 @@
                 <p class="erreur">{{ message }}</p>
             {% endfor %}
 
-            {% if error %}
-                <p class="erreur">
-                    {{ error.messageKey|trans(error.messageData, 'security') }}
-                </p>
-            {% endif %}
+             {% if error %}
+                 <p class="erreur">{{ error }}</p>
+             {% endif %}
 
             <div class="inputbox">
                 <ion-icon name="mail-outline"></ion-icon>
