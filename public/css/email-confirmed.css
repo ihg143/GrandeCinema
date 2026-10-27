@@ -1,3 +1,4 @@
+/* ---------- email-confirmed ---------- */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
 * {
@@ -61,7 +62,7 @@ section a:hover {
     background-color: #ffcc00;
     transform: translateY(-2px);
 }
-
+/* ===== Responsive ===== */
 @media (max-width: 576px) {
     section {
         padding: 2rem 1.3rem;

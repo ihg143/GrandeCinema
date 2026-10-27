@@ -1,4 +1,4 @@
-/* ---------- General ---------- */
+/* ---------- accueil ---------- */
 .bodyaccueil {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -13,7 +13,7 @@ a {
 
 /* ---------- Header ---------- */
 
-/* ===== Header accueil ===== */
+/* ------------- Header accueil ------------- */
 .headeracueil {
     position: relative;
     background-color: #000000;
@@ -30,7 +30,7 @@ a {
     gap: 25px;
 }
 
-/* ===== Logo ===== */
+/* ------------- Logo ------------- */
 .logo {
     font-size: 28px;
     font-weight: 800;
@@ -40,7 +40,7 @@ a {
     white-space: nowrap;
 }
 
-/* ===== Navigation ===== */
+/* ------------- Navigation ------------- */
 .nav {
     display: flex;
     align-items: center;
@@ -70,7 +70,7 @@ a {
     transition: color 0.2s ease;
 }
 
-/* ===== Icônes ===== */
+/* ------------- Icônes ------------- */
 .nav li a i {
     color: #ffcc00;
     font-size: 16px;
@@ -78,7 +78,7 @@ a {
     transition: transform 0.2s ease;
 }
 
-/* ===== Survol ===== */
+/* ------------- Survol ------------- */
 .nav li a:hover {
     color: #ffcc00;
 }
@@ -86,7 +86,7 @@ a {
 .nav li a:hover i {
     transform: scale(1.12);
 }
-/* Barre de recherche du header */
+/*-------------- Barre de recherche du header-------------*/
 .header-container > .film-search {
     display: flex;
     align-items: center;
@@ -619,8 +619,7 @@ a {
     font-size: 0.78rem;
     color: #cccccc;
 }
-
-/* ===== Tablettes ===== */
+/* ===== Responsive ===== */
 @media (max-width: 1100px) {
     .liste-films {
         grid-template-columns: repeat(3, 1fr);
@@ -653,8 +652,7 @@ a {
         border-right: none;
     }
 }
-
-/* ===== Téléphones ===== */
+/* ===== Responsive ===== */
 @media (max-width: 800px) {
     html,
     body {
@@ -716,7 +714,7 @@ a {
         margin: 10px 0;
     }
 
-    /* Bannière */
+
     .banniere {
         min-height: 0;
         padding: 40px 5%;
@@ -808,7 +806,6 @@ a {
         width: auto;
     }
 
-    /* Nouvelle section tarif */
     .tarif-section {
         padding: 40px 16px;
         gap: 30px;

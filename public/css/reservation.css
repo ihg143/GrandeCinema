@@ -1,4 +1,4 @@
-
+/* ---------- reservation ---------- */
 .reservation {
     max-width: 1100px;
     margin: 40px auto;
@@ -52,7 +52,7 @@
                 box-shadow 0.2s ease;
 }
 
-/* Place libre : cliquable et en relief */
+/* Place libre */
 .place--libre {
     background: #e6e6e6;
     cursor: pointer;
@@ -128,7 +128,7 @@
     text-align: center;
 }
 
-/* Bouton de confirmation */
+
 #confirmer-reservation {
     padding: 12px 25px;
     background: #ffcc00;
@@ -149,7 +149,7 @@
     opacity: 0.4;
     cursor: not-allowed;
 }
-/* Les places de la légende servent uniquement d'indication */
+
 .place--legende {
     display: inline-block;
     width: 42px;
@@ -158,8 +158,8 @@
     pointer-events: none;
     transform: none;
 }
-/* Adaptation mobile */
-@media (max-width: 600px) {
+/* ===== Responsive ===== */
+@media (max-width: 800px) {
     .reservation {
         padding: 12px;
     }

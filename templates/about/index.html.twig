@@ -1,0 +1,65 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}À propos | GrandCiné{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/about.css') }}">
+{% endblock %}
+
+{% block body %}
+{% include 'partials/header.html.twig' %}
+
+<main class="about">
+    <h1 class="about__title">À propos de GrandCiné</h1>
+
+    <section class="about__card">
+        <div class="about__image">
+            <img   src="{{ asset('image/histoire-cinema.png') }}"
+          alt="Histoire du cinéma">
+        </div>
+
+        <div class="about__content">
+<h2>L'histoire de GrandCiné</h2>
+
+<p>
+    Depuis plus de <strong>50 ans</strong>, GrandCiné fait partie
+    du paysage culturel de la ville. Au fil des années, le cinéma
+    a su conserver sa place auprès du public en proposant un lieu
+    de divertissement et de partage autour du septième art.
+</p>
+
+<p>
+Aujourd'hui, GrandCiné dispose de <strong>10 salles et de 1 700 places</strong>, 
+permettant d'accueillir un large public tout au long de l'année. Grâce à ses différentes salles, 
+le cinéma propose un cadre adapté aux projections de films et à l'organisation d'événements.
+</p>
+
+<h2>Une ville animée par la culture</h2>
+
+<p>
+    La vie culturelle de la ville est également marquée par
+    son <strong>festival de jazz</strong>, un événement qui attire
+    chaque année de nombreux visiteurs et amateurs de musique.
+</p>
+
+<p>
+    Durant le festival, la fréquentation de la ville augmente
+    considérablement. Les concerts et les animations attirent
+    un public varié et contribuent à faire de cette période
+    un moment important de la vie locale.
+</p>
+
+<p>
+    Situé au cœur de cette dynamique culturelle, GrandCiné
+    participe à la vie de la ville en offrant aux habitants
+    et aux visiteurs un lieu dédié au cinéma et au divertissement.
+</p>
+
+<p class="about__signature">
+    <span>GrandCiné</span> : le cinéma au cœur de la vie culturelle.
+</p>
+    </section>
+</main>
+{% endblock %}

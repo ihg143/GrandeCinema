@@ -1,4 +1,4 @@
-/* ===== Page détail d'un film ===== */
+/* -------- Page détail d'un film----- */
 .detail {
     max-width: 1100px;
     margin: 0 auto;
@@ -18,7 +18,7 @@
     color: var(--jaune);
 }
 
-/* ===== Informations du film ===== */
+/* -------- Informations du film -------- */
 .detail__main {
     display: grid;
     grid-template-columns: 300px minmax(0, 1fr);
@@ -89,7 +89,7 @@
     flex-wrap: wrap;
 }
 
-/* ===== Boutons : Choisir ma séance + Réserver ma place ===== */
+/*---- Boutons -------*/
 .detail__actions a,
 .seances__heures a {
     display: inline-flex;
@@ -110,7 +110,7 @@
         transform 0.2s ease;
 }
 
-/* Hover identique : fond blanc, texte noir */
+/* ------Hover identique : fond blanc, texte noir -----*/
 .detail__actions a:hover,
 .seances__heures a:hover {
     background: var(--blanc);
@@ -126,7 +126,7 @@
     outline-offset: 4px;
 }
 
-/* ===== Section des séances ===== */
+/* ------ Section des séances ---------- */
 .seances {
     margin-top: 55px;
     padding-bottom: 10px;
@@ -172,7 +172,7 @@
     gap: 12px;
 }
 
-/* Aucune séance */
+/* ------Aucune séance----- */
 .film-empty {
     padding: 22px;
     background: var(--carte);
@@ -181,14 +181,13 @@
     text-align: center;
 }
 
-/* ===== Pied de page ===== */
+/* ----- Pied de page -------- */
 .footer {
     text-align: center;
     padding: 24px;
     color: var(--gris);
 }
-
-/* ===== Adaptation mobile ===== */
+/* ===== Responsive ===== */
 @media (max-width: 760px) {
     .detail {
         padding: 24px 16px 40px;

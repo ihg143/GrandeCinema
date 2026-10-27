@@ -1,7 +1,4 @@
-/* ========================================
-   GRANDCINÉ — GESTION DES FILMS
-   ======================================== */
-
+/*---GRANDCINÉ — GESTION DES FILMS--- */
 :root {
     --fond: #111111;
     --carte: #1b1b1b;
@@ -12,7 +9,7 @@
     --texte-doux: #b5b5b5;
 }
 
-/* ===== PAGE ===== */
+/* ------- PAGE------- */
 
 body {
     background-color: var(--fond);
@@ -34,7 +31,7 @@ body {
     box-sizing: border-box;
 }
 
-/* Contenu centré */
+/* -----Contenu centré-- */
 .admin > .bloc {
     width: 100%;
     max-width: 1450px;
@@ -42,7 +39,7 @@ body {
     padding: 0 24px;
 }
 
-/* ===== TITRES ===== */
+/* --- TITRES ---- */
 
 .admin .titre {
     margin: 0 0 20px;
@@ -60,7 +57,7 @@ body {
     line-height: 1.6;
 }
 
-/* ===== MESSAGE DE CONFIRMATION ===== */
+/* ---------MESSAGE DE CONFIRMATION -------- */
 
 .admin > .flash {
     width: calc(100% - 48px);
@@ -73,9 +70,6 @@ body {
     color: var(--texte);
 }
 
-/* ========================================
-   RECHERCHE ET FILTRES
-   ======================================== */
 
 .admin .filtres-films {
     display: grid;
@@ -139,7 +133,7 @@ body {
     box-shadow: 0 0 0 3px rgb(255 204 0 / 15%);
 }
 
-/* Boutons des filtres */
+/* ---Boutons des filtres--- */
 
 .admin .actions-filtres {
     display: flex;
@@ -170,7 +164,7 @@ body {
                 box-shadow 0.2s ease;
 }
 
-/* Filtrer : jaune et noir */
+/* --Filtrer : jaune et noir--- */
 
 .admin .filtres-films .btn-jaune {
     border-color: var(--jaune);
@@ -186,7 +180,7 @@ body {
     box-shadow: 0 4px 12px rgb(255 204 0 / 18%);
 }
 
-/* Réinitialiser : gris et blanc */
+/* --Réinitialiser : gris et blanc---- */
 
 .admin .filtres-films .btn-reset {
     border-color: #414141;
@@ -201,7 +195,7 @@ body {
     transform: translateY(-1px);
 }
 
-/* Résultats de recherche */
+/* ---Résultats de recherche---- */
 
 .admin .resultats {
     margin: 20px 0;
@@ -214,9 +208,7 @@ body {
     font-size: 13px;
 }
 
-/* ========================================
-   TABLEAU DES FILMS
-   ======================================== */
+/* ----TABLEAU DES FILMS---*/
 
 .admin .table-wrap {
     width: 100%;
@@ -237,7 +229,7 @@ body {
     color: var(--texte);
 }
 
-/* En-tête */
+/* --En-tête--- */
 
 .admin .table thead th {
     padding: 20px 18px;
@@ -250,7 +242,7 @@ body {
     white-space: nowrap;
 }
 
-/* Cellules */
+/* ---Cellules-- */
 
 .admin .table tbody td {
     height: 130px;
@@ -271,7 +263,7 @@ body {
     border-bottom: 0;
 }
 
-/* Affiches */
+/*-- Affiches--- */
 
 .admin .table .mini {
     display: block;
@@ -282,7 +274,7 @@ body {
     object-fit: cover;
 }
 
-/* Actions du tableau */
+/* ---Actions du tableau---- */
 
 .admin .table td.actions {
     white-space: nowrap;
@@ -296,9 +288,7 @@ body {
     vertical-align: middle;
 }
 
-/* ========================================
-   BOUTONS DU TABLEAU ET DU FORMULAIRE
-   ======================================== */
+/* -------BOUTONS -------------- */
 
 .admin .bloc .btn {
     display: inline-flex;
@@ -323,7 +313,7 @@ body {
                 box-shadow 0.2s ease;
 }
 
-/* Bouton jaune */
+/* ------Bouton jaune -------*/
 
 .admin .bloc .btn-jaune {
     border-color: var(--jaune);
@@ -338,7 +328,7 @@ body {
     transform: translateY(-1px);
 }
 
-/* Bouton rouge */
+/* -----Bouton rouge -----*/
 
 .admin .bloc .btn-rouge {
     border-color: var(--rouge);
@@ -353,7 +343,7 @@ body {
     transform: translateY(-1px);
 }
 
-/* Bouton contour */
+/* -------Bouton contour-------- */
 
 .admin .bloc .btn-contour {
     border-color: var(--bord);
@@ -367,15 +357,13 @@ body {
     color: var(--jaune);
 }
 
-/* Focus clavier */
+/* ----Focus clavier --------*/
 
 .admin .bloc .btn:focus-visible,
 .admin .filtres-films .btn:focus-visible {
     outline: 2px solid var(--jaune);
     outline-offset: 3px;
 }
-
-/* Ligne sans film */
 
 .admin .table td.vide {
     height: auto;
@@ -384,9 +372,7 @@ body {
     text-align: center;
 }
 
-/* ========================================
-   FORMULAIRE D'AJOUT / MODIFICATION
-   ======================================== */
+/*------FORMULAIRE D'AJOUT / MODIFICATION------- */
 
 .admin .formulaire {
     display: block;
@@ -449,10 +435,7 @@ body {
     margin-top: 8px;
 }
 
-/* ========================================
-   RESPONSIVE — TABLETTES
-   ======================================== */
-
+/* ===== Responsive ===== */
 @media (max-width: 1100px) {
     .admin .filtres-films {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -462,10 +445,6 @@ body {
         grid-column: 1 / -1;
     }
 }
-
-/* ========================================
-   RESPONSIVE — MOBILES
-   ======================================== */
 
 @media (max-width: 700px) {
     .admin > .bloc {

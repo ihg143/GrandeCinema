@@ -1,5 +1,5 @@
 /* GRANDCINÉ — GESTION DES RÉSERVATIONS*/
-/* ===== Couleurs ===== */
+/* -------- Couleurs ----- */
 :root {
     --fond: #111;
     --carte: #080808;
@@ -17,7 +17,7 @@
     box-sizing: border-box;
 }
 
-/* ===== Mise en page ===== */
+/* ------ Mise en page ---------- */
 .page {
     width: min(1200px, calc(100% - 40px));
     margin: 0 auto;
@@ -47,7 +47,7 @@
     color: var(--gris);
 }
 
-/* ===== Bouton ===== */
+/* ------ Bouton -------- */
 .page .bouton {
     display: inline-flex;
     justify-content: center;
@@ -74,7 +74,7 @@
     transform: scale(.98);
 }
 
-/* ===== Statistiques ===== */
+/* ------ Statistiques ---------- */
 .page .stats {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -113,7 +113,7 @@
     font-weight: 700;
 }
 
-/* ===== Filtres ===== */
+/* ------ Filtres -------- */
 .page .filtres {
     display: grid;
     grid-template-columns:
@@ -161,7 +161,7 @@
     color-scheme: dark;
 }
 
-/* ===== Tableau ===== */
+/* ------ Tableau -------- */
 .page .tableau-box {
     width: 100%;
     overflow-x: auto;
@@ -215,7 +215,7 @@
     text-align: center;
 }
 
-/* ===== Statuts des réservations ===== */
+/* ------ Statuts des réservations ---------- */
 .page .badge {
     display: inline-flex;
     justify-content: center;
@@ -246,7 +246,7 @@
     color: #ff858c;
 }
 
-/* ===== Bouton détail ===== */
+/* ------ Bouton détail ---------- */
 .page .btn-icone {
     display: inline-flex;
     justify-content: center;
@@ -269,7 +269,7 @@
     color: var(--jaune);
 }
 
-/* ===== Pagination ===== */
+/* ------------- PAGINATION ------------- */
 .page .bas-de-page {
     display: flex;
     justify-content: space-between;
@@ -311,8 +311,7 @@
 .page .pagination a.page-actuelle {
     font-weight: 700;
 }
-
-/* ===== Tablettes ===== */
+/* ===== Responsive ===== */
 @media (max-width: 950px) {
     .page .stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -322,8 +321,7 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
-
-/* ===== Mobiles ===== */
+/* ===== Responsive ===== */
 @media (max-width: 600px) {
     .page {
         width: calc(100% - 24px);

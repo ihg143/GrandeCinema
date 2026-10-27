@@ -1,6 +1,5 @@
-
-/*GRANDCINÉ — GESTION DES SÉANCES */
-
+/*----GRANDCINÉ — GESTION DES SÉANCES---------- */
+/* ------ Couleurs -------- */
 :root {
     --fond: #111111;
     --carte: #080808;
@@ -13,7 +12,7 @@
     --vert: #1f9d55;
 }
 
-/* ===== CONTENEUR PRINCIPAL ===== */
+/* ------ CONTENEUR PRINCIPAL -------- */
 
 main.page {
     display: block !important;
@@ -48,7 +47,7 @@ main.page {
     margin-left: 0;
 }
 
-/* ===== TITRE ===== */
+/* ------ TITRE -------- */
 
 .page .entete {
     display: flex;
@@ -74,7 +73,7 @@ main.page {
     line-height: 1.5;
 }
 
-/* ===== BOUTONS ===== */
+/* ------ BOUTONS -------- */
 
 .page .bouton {
     display: inline-flex;
@@ -114,7 +113,7 @@ main.page {
     background: #3a3a3a;
 }
 
-/* ===== FILTRES ===== */
+/* ------ FILTRES -------- */
 
 .page .filtres {
     display: grid;
@@ -184,7 +183,7 @@ main.page {
     gap: 8px;
 }
 
-/* ===== TABLEAU DES SÉANCES ===== */
+/* ------ TABLEAU DES SÉANCES -------- */
 
 .page .tableau-box {
     display: block;
@@ -250,7 +249,7 @@ main.page {
     color: var(--gris);
 }
 
-/* ===== AFFICHES ET INFORMATIONS DU FILM ===== */
+/* --------AFFICHES ET INFORMATIONS DU FILM ---------- */
 
 .page .film {
     display: flex;
@@ -315,7 +314,7 @@ main.page {
     font-size: 12px;
 }
 
-/* ===== SALLES ET PLACES ===== */
+/* --------- SALLES ET PLACES ------- */
 
 .page .badge-salle {
     display: inline-block;
@@ -340,7 +339,7 @@ main.page {
     font-size: 11px;
 }
 
-/* ===== ACTIONS DU TABLEAU ===== */
+/* ----------- ACTIONS DU TABLEAU ------------- */
 
 .page .actions-tableau {
     display: flex;
@@ -384,7 +383,7 @@ main.page {
     background: #b92332;
 }
 
-/* ===== MESSAGES ===== */
+/* ------------- MESSAGES -------------- */
 
 .page .message {
     margin-top: 0;
@@ -405,7 +404,7 @@ main.page {
     color: #ffb3b8;
 }
 
-/* ===== PAGINATION : ALIGNÉE SUR LE TABLEAU ===== */
+/* ------------- PAGINATION : ALIGNÉE SUR LE TABLEAU ------------- */
 
 .page .bas-de-page {
     display: flex;
@@ -456,7 +455,7 @@ main.page {
     font-weight: 700;
 }
 
-/* ===== FORMULAIRE D'AJOUT : SOUS LA PAGINATION ===== */
+/* ------------- FORMULAIRE D'AJOUT : SOUS LA PAGINATION ------------- */
 
 .page .formulaire-ajout {
     display: block !important;
@@ -566,8 +565,7 @@ main.page {
     min-width: 170px;
 }
 
-/* ===== TABLETTES ===== */
-
+/* ===== Responsive ===== */
 @media (max-width: 950px) {
     main.page {
         width: calc(100% - 32px) !important;
@@ -582,9 +580,7 @@ main.page {
         align-self: end;
     }
 }
-
-/* ===== MOBILES ===== */
-
+/* ===== Responsive ===== */
 @media (max-width: 600px) {
     main.page {
         width: calc(100% - 24px) !important;

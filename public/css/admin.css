@@ -1,6 +1,5 @@
-/* GRANDCINÉ — TABLEAU DE BORD ADMIN */
-
-/* Couleurs */
+/* ------GRANDCINÉ — TABLEAU DE BORD ADMIN -------*/
+/* ------Couleurs----- */
 :root {
     --jaune: #ffcc00;
     --noir: #000000;
@@ -12,7 +11,7 @@
     --rouge: #ff5a5a;
 }
 
-/* Page principale */
+/* -------Page principale -----------*/
 .admin {
     min-height: 100vh;
     padding: 40px 60px 80px;
@@ -21,7 +20,7 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Titres */
+/*--------- Titres-----------*/
 .admin-title {
     margin: 0 0 32px;
     padding-left: 14px;
@@ -42,9 +41,7 @@
     font-size: 14px;
 }
 
-/* ========================================
-   NAVIGATION ADMINISTRATION
-   ======================================== */
+/*-----------NAVIGATION ADMINISTRATION---------- */
 
 .admin-navigation {
     display: flex;
@@ -83,9 +80,7 @@
     outline-offset: 3px;
 }
 
-/* ========================================
-   STATISTIQUES
-   ======================================== */
+/* ----------- STATISTIQUES------------- */
 
 .stat-grid {
     display: grid;
@@ -140,10 +135,7 @@
     text-decoration: underline;
 }
 
-/* ========================================
-   CARTES DE CONTENU
-   ======================================== */
-
+/* -----------CARTES DE CONTENU---------- */
 .admin-card {
     min-width: 0;
     margin-bottom: 32px;
@@ -164,9 +156,7 @@
     margin-bottom: 0;
 }
 
-/* ========================================
-   TAUX DE REMPLISSAGE
-   ======================================== */
+/* ------------TAUX DE REMPLISSAGE------------*/
 
 .fill-line {
     margin-bottom: 18px;
@@ -202,9 +192,7 @@
     background: var(--rouge);
 }
 
-/* ========================================
-   GRAPHIQUE D'AFFLUENCE
-   ======================================== */
+/* ---------------GRAPHIQUE D'AFFLUENCE------------- */
 
 .chart {
     display: flex;
@@ -245,9 +233,7 @@
     color: var(--texte-gris);
 }
 
-/* ========================================
-   DERNIÈRES RÉSERVATIONS
-   ======================================== */
+/* --------------DERNIÈRES RÉSERVATIONS----------- */
 
 .table-wrap {
     width: 100%;
@@ -281,11 +267,7 @@
 .empty-text {
     color: var(--texte-gris);
 }
-
-/* ========================================
-   TABLETTES
-   ======================================== */
-
+/* ===== Responsive ===== */
 @media (max-width: 1000px) {
     .admin {
         padding: 30px;
@@ -299,11 +281,7 @@
         grid-template-columns: 1fr;
     }
 }
-
-/* ========================================
-   MOBILES
-   ======================================== */
-
+/* ===== Responsive ===== */
 @media (max-width: 600px) {
     .admin {
         padding: 20px 14px 40px;
