@@ -1,0 +1,651 @@
+
+/*GRANDCINÉ — GESTION DES SÉANCES */
+
+:root {
+    --fond: #111111;
+    --carte: #080808;
+    --secondaire: #171717;
+    --bordure: #2b2b2b;
+    --texte: #f2f3f5;
+    --gris: #a0a0a0;
+    --jaune: #ffcc00;
+    --rouge: #dc2f3a;
+    --vert: #1f9d55;
+}
+
+/* ===== CONTENEUR PRINCIPAL ===== */
+
+main.page {
+    display: block !important;
+    position: relative;
+    float: none !important;
+    width: min(1200px, calc(100% - 40px)) !important;
+    max-width: 1200px !important;
+    min-width: 0 !important;
+    height: auto !important;
+    margin: 0 auto !important;
+    padding: 30px 0 40px !important;
+    color: var(--texte);
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.page,
+.page * {
+    box-sizing: border-box;
+}
+
+.page > .entete,
+.page > .filtres,
+.page > .tableau-box,
+.page > .bas-de-page,
+.page > .formulaire-ajout,
+.page > .message {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+/* ===== TITRE ===== */
+
+.page .entete {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.page .entete h1 {
+    margin: 0;
+    padding-left: 14px;
+    border-left: 4px solid var(--jaune);
+    color: var(--texte);
+    font-size: 28px;
+    line-height: 1.3;
+}
+
+.page .entete p {
+    margin: 8px 0 0 18px;
+    color: var(--gris);
+    line-height: 1.5;
+}
+
+/* ===== BOUTONS ===== */
+
+.page .bouton {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 10px 16px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background: var(--jaune);
+    color: #111;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background .2s, transform .2s;
+}
+
+.page .bouton:hover {
+    background: #e6b800;
+}
+
+.page .bouton:active {
+    transform: scale(.98);
+}
+
+.page .bouton-reset {
+    background: #292929;
+    color: var(--texte);
+    border-color: #444;
+}
+
+.page .bouton-reset:hover {
+    background: #3a3a3a;
+}
+
+/* ===== FILTRES ===== */
+
+.page .filtres {
+    display: grid;
+    grid-template-columns:
+        minmax(200px, 2fr)
+        minmax(130px, 1fr)
+        minmax(155px, 1fr)
+        auto;
+    align-items: end;
+    gap: 14px;
+    margin-bottom: 22px;
+    padding: 18px 20px;
+    background: var(--secondaire);
+    border: 1px solid var(--bordure);
+    border-radius: 10px;
+}
+
+.page .champ-recherche,
+.page .champ-filtre {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.page .filtres label {
+    display: block;
+    margin-bottom: 8px;
+    color: #d4d4d4;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.page .filtres input,
+.page .filtres select {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+    padding: 0 12px;
+    border: 1px solid #3a3a3a;
+    border-radius: 7px;
+    outline: none;
+    background: #0c0c0c;
+    color: var(--texte);
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.page .filtres input::placeholder {
+    color: #888;
+}
+
+.page .filtres input:focus,
+.page .filtres select:focus {
+    border-color: var(--jaune);
+    box-shadow: 0 0 0 3px rgb(255 204 0 / 12%);
+}
+
+.page .filtres input[type="date"] {
+    color-scheme: dark;
+}
+
+.page .actions-filtres {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* ===== TABLEAU DES SÉANCES ===== */
+
+.page .tableau-box {
+    display: block;
+    position: relative;
+    float: none !important;
+    overflow-x: auto;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+    background: var(--carte);
+    border: 1px solid var(--bordure);
+    border-radius: 10px;
+}
+
+.page table {
+    width: 100%;
+    min-width: 790px;
+    margin: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    text-align: left;
+}
+
+.page thead {
+    background: #151515;
+}
+
+.page th {
+    padding: 14px 15px;
+    border-bottom: 1px solid var(--bordure);
+    color: var(--jaune);
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.page td {
+    padding: 13px 15px;
+    border-bottom: 1px solid #262626;
+    vertical-align: middle;
+    line-height: 1.5;
+}
+
+.page tbody tr {
+    transition: background .2s;
+}
+
+.page tbody tr:hover {
+    background: #141414;
+}
+
+.page tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.page .ligne-vide {
+    padding: 35px 20px;
+    color: var(--gris);
+    text-align: center;
+}
+
+.page .texte-gris {
+    color: var(--gris);
+}
+
+/* ===== AFFICHES ET INFORMATIONS DU FILM ===== */
+
+.page .film {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 220px;
+}
+
+.page .film img.affiche {
+    display: block;
+    flex: 0 0 76px;
+    width: 76px !important;
+    min-width: 76px;
+    max-width: 76px;
+    height: 112px !important;
+    min-height: 112px;
+    max-height: 112px;
+    padding: 0;
+    margin: 0;
+    object-fit: contain;
+    object-position: center;
+    border: none !important;
+    border-radius: 0;
+    outline: none;
+    background: transparent !important;
+    box-shadow: none;
+}
+
+.page .film .affiche-secours {
+    display: flex;
+    flex: 0 0 76px;
+    width: 76px;
+    height: 112px;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    border: none;
+    color: var(--jaune);
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.page .film .affiche-secours[hidden] {
+    display: none !important;
+}
+
+.page .film-infos {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 120px;
+}
+
+.page .film-infos strong {
+    color: #fff;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.page .film-infos small {
+    color: var(--gris);
+    font-size: 12px;
+}
+
+/* ===== SALLES ET PLACES ===== */
+
+.page .badge-salle {
+    display: inline-block;
+    color: var(--texte);
+    white-space: nowrap;
+}
+
+.page .places-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    white-space: nowrap;
+}
+
+.page .places-info strong {
+    color: var(--texte);
+    font-size: 13px;
+}
+
+.page .places-info small {
+    color: var(--gris);
+    font-size: 11px;
+}
+
+/* ===== ACTIONS DU TABLEAU ===== */
+
+.page .actions-tableau {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.page .btn-icone {
+    display: inline-flex;
+    flex: 0 0 36px;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 7px;
+    background: #292e38;
+    color: #fff;
+    font-size: 16px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.page .btn-modifier:hover {
+    background: #424957;
+    color: var(--jaune);
+}
+
+.page .form-supprimer {
+    display: inline-flex;
+    margin: 0;
+}
+
+.page .btn-supprimer {
+    background: var(--rouge);
+}
+
+.page .btn-supprimer:hover {
+    background: #b92332;
+}
+
+/* ===== MESSAGES ===== */
+
+.page .message {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding: 12px 15px;
+    border-radius: 7px;
+}
+
+.page .message-ok {
+    background: rgb(31 157 85 / 15%);
+    border: 1px solid var(--vert);
+    color: #a6edbd;
+}
+
+.page .message-erreur {
+    background: rgb(220 47 58 / 15%);
+    border: 1px solid var(--rouge);
+    color: #ffb3b8;
+}
+
+/* ===== PAGINATION : ALIGNÉE SUR LE TABLEAU ===== */
+
+.page .bas-de-page {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;
+    margin-top: 14px;
+    margin-bottom: 0;
+    padding: 0;
+    color: var(--gris);
+}
+
+.page .pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+}
+
+.page .pagination a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--bordure);
+    border-radius: 6px;
+    background: var(--carte);
+    color: var(--texte);
+    text-decoration: none;
+    transition: background .2s, border-color .2s;
+}
+
+.page .pagination a:hover,
+.page .pagination a.page-actuelle {
+    background: var(--jaune);
+    border-color: var(--jaune);
+    color: #111;
+}
+
+.page .pagination a.page-actuelle {
+    font-weight: 700;
+}
+
+/* ===== FORMULAIRE D'AJOUT : SOUS LA PAGINATION ===== */
+
+.page .formulaire-ajout {
+    display: block !important;
+    position: relative;
+    float: none !important;
+    clear: both;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0;
+    margin: 22px 0 0 !important;
+    padding: 22px 24px;
+    background: var(--secondaire);
+    border: 1px solid var(--bordure);
+    border-radius: 10px;
+    scroll-margin-top: 90px;
+}
+
+.page .formulaire-entete {
+    display: block;
+    margin: 0 0 20px;
+    padding: 0 0 15px;
+    border-bottom: 1px solid var(--bordure);
+}
+
+.page .formulaire-entete h2 {
+    margin: 0 0 7px;
+    color: var(--jaune);
+    font-size: 22px;
+    line-height: 1.4;
+}
+
+.page .formulaire-entete p {
+    margin: 0;
+    color: var(--gris);
+    line-height: 1.5;
+}
+
+.page form.form-ajout-seance {
+    display: grid !important;
+    position: static;
+    float: none !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+    gap: 18px 20px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.page .champ-formulaire {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+    margin: 0;
+}
+
+.page .champ-formulaire label {
+    margin: 0;
+    color: var(--texte);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.page .champ-formulaire input,
+.page .champ-formulaire select {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    height: 44px;
+    margin: 0;
+    padding: 0 12px;
+    border: 1px solid #3a3a3a;
+    border-radius: 7px;
+    outline: none;
+    background: #0c0c0c;
+    color: var(--texte);
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.page .champ-formulaire input:focus,
+.page .champ-formulaire select:focus {
+    border-color: var(--jaune);
+    box-shadow: 0 0 0 3px rgb(255 204 0 / 12%);
+}
+
+.page .champ-formulaire input[type="date"],
+.page .champ-formulaire input[type="time"] {
+    color-scheme: dark;
+}
+
+.page .formulaire-actions {
+    display: flex;
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    padding-top: 2px;
+}
+
+.page .formulaire-actions .bouton {
+    min-width: 170px;
+}
+
+/* ===== TABLETTES ===== */
+
+@media (max-width: 950px) {
+    main.page {
+        width: calc(100% - 32px) !important;
+        padding-top: 24px !important;
+    }
+
+    .page .filtres {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .page .actions-filtres {
+        align-self: end;
+    }
+}
+
+/* ===== MOBILES ===== */
+
+@media (max-width: 600px) {
+    main.page {
+        width: calc(100% - 24px) !important;
+        padding-top: 20px !important;
+    }
+
+    .page .entete {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .page .entete h1 {
+        font-size: 23px;
+    }
+
+    .page .entete .bouton {
+        width: 100%;
+    }
+
+    .page .filtres {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 13px;
+        padding: 14px;
+    }
+
+    .page .actions-filtres {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .page .actions-filtres .bouton {
+        width: 100%;
+        padding-right: 8px;
+        padding-left: 8px;
+    }
+
+    .page .bas-de-page {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .page .pagination {
+        justify-content: flex-start;
+        margin-left: 0;
+    }
+
+    .page .formulaire-ajout {
+        margin-top: 18px !important;
+        padding: 17px;
+    }
+
+    .page form.form-ajout-seance {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 15px;
+    }
+
+    .page .formulaire-actions {
+        grid-column: auto;
+    }
+
+    .page .formulaire-actions .bouton {
+        width: 100%;
+    }
+}

@@ -1,0 +1,298 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des séances{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/admin-seances.css') }}">
+{% endblock %}
+
+{% block body %}
+    {% include 'partials/header.html.twig' %}
+
+    <main class="page">
+
+        {# En-tête #}
+        <div class="entete">
+            <div>
+                <h1>Gestion des séances</h1>
+                <p>Consultez et gérez les séances de vos films.</p>
+            </div>
+
+            <a class="bouton bouton-ajout" href="#ajouter-seance">
+                <span>+</span> Ajouter une séance
+            </a>
+        </div>
+
+        {# Messages de confirmation et d'erreur #}
+        {% for message in app.flashes('succes') %}
+            <p class="message message-ok">{{ message }}</p>
+        {% endfor %}
+
+        {% for message in app.flashes('erreur') %}
+            <p class="message message-erreur">{{ message }}</p>
+        {% endfor %}
+
+        {# Filtres #}
+        <form
+            class="filtres"
+            method="get"
+            action="{{ path('gestion_seances') }}"
+        >
+            <div class="champ-recherche">
+                <label for="recherche-film">Rechercher un film</label>
+                <input
+                    id="recherche-film"
+                    type="search"
+                    name="q"
+                    value="{{ filtre_q|default('') }}"
+                    placeholder="Ex. : Le Robot sauvage"
+                >
+            </div>
+
+            <div class="champ-filtre">
+                <label for="filtre-salle">Salle</label>
+                <select id="filtre-salle" name="salle">
+                    <option value="">Toutes les salles</option>
+
+                    {% for numero in salles %}
+                        <option
+                            value="{{ numero }}"
+                            {% if numero == filtre_salle %}selected{% endif %}
+                        >
+                            Salle {{ numero }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="champ-filtre">
+                <label for="filtre-date">Date de la séance</label>
+                <input
+                    id="filtre-date"
+                    type="date"
+                    name="date"
+                    value="{{ filtre_date|default('') }}"
+                >
+            </div>
+
+            <div class="actions-filtres">
+                <button class="bouton bouton-filtrer" type="submit">
+                    Filtrer
+                </button>
+
+                <a
+                    class="bouton bouton-reset"
+                    href="{{ path('gestion_seances') }}"
+                >
+                    Réinitialiser
+                </a>
+            </div>
+        </form>
+
+        {# Tableau des séances #}
+        <div class="tableau-box">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Film</th>
+                        <th>Salle</th>
+                        <th>Date</th>
+                        <th>Horaire</th>
+                        <th>Places disponibles</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for seance in seances %}
+                        <tr>
+                            <td>
+                                <div class="film">
+                                    {% set imageFilm = seance.film.imageFilm|default('')|trim|replace({'image/': ''}) %}
+
+                                    {% if imageFilm is not empty %}
+                                        <img
+                                            class="affiche"
+                                            src="{{ asset('image/' ~ imageFilm) }}"
+                                            alt="Affiche de {{ seance.film.nomFilm }}"
+                                            onerror="this.hidden=true; this.nextElementSibling.hidden=false;"
+                                        >
+                                        <div
+                                            class="affiche affiche-secours"
+                                            hidden
+                                        >
+                                            {{ seance.film.nomFilm|first|upper }}
+                                        </div>
+                                    {% else %}
+                                        <div class="affiche affiche-secours">
+                                            {{ seance.film.nomFilm|first|upper }}
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="film-infos">
+                                        <strong>{{ seance.film.nomFilm }}</strong>
+                                        <small>{{ seance.film.genre|default('Film') }}</small>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="badge-salle">
+                                    Salle {{ seance.salle }}
+                                </span>
+                            </td>
+
+                            <td>{{ seance.dateSeance|date('d/m/Y') }}</td>
+                            <td>{{ seance.horaireSeance|date('H:i') }}</td>
+
+                            <td>
+                                {% set capacite = places[seance.idSeance].total|default(0) %}
+                                {% set libres = places[seance.idSeance].libres|default(0) %}
+
+                                <div class="places-info">
+                                    <strong>{{ libres }} / {{ capacite }}</strong>
+                                    <small>places libres / total</small>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="actions-tableau">
+                                    <a
+                                        class="btn-icone btn-modifier"
+                                        href="#"
+                                        title="Modifier la séance"
+                                        aria-label="Modifier la séance"
+                                    >✎</a>
+
+                                    <form
+                                        class="form-supprimer"
+                                        method="post"
+                                        action="{{ path('gestion_seance_delete', {
+                                            id: seance.idSeance
+                                        }) }}"
+                                        onsubmit="return confirm('Voulez-vous vraiment supprimer cette séance ?');"
+                                    >
+                                        <input
+                                            type="hidden"
+                                            name="_token"
+                                            value="{{ csrf_token('supprimer' ~ seance.idSeance) }}"
+                                        >
+
+                                        <button
+                                            class="btn-icone btn-supprimer"
+                                            type="submit"
+                                            title="Supprimer la séance"
+                                            aria-label="Supprimer la séance"
+                                        >🗑</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="ligne-vide">
+                                Aucune séance trouvée pour ces critères.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {# Pagination #}
+        <div class="bas-de-page">
+            <span>{{ total }} séance(s) trouvée(s)</span>
+
+            {% if pages > 1 %}
+                <nav class="pagination" aria-label="Pagination">
+                    {% for i in 1..pages %}
+                        <a
+                            href="{{ path('gestion_seances', {
+                                page: i,
+                                q: filtre_q,
+                                salle: filtre_salle,
+                                date: filtre_date
+                            }) }}"
+                            class="{{ i == page ? 'page-actuelle' : '' }}"
+                            {% if i == page %}aria-current="page"{% endif %}
+                        >
+                            {{ i }}
+                        </a>
+                    {% endfor %}
+                </nav>
+            {% endif %}
+        </div>
+
+        {# Formulaire d'ajout : toujours sous le tableau et la pagination #}
+        <section class="formulaire-ajout" id="ajouter-seance">
+            <div class="formulaire-entete">
+                <h2>Ajouter une séance</h2>
+                <p>Programmez une nouvelle séance pour un film.</p>
+            </div>
+
+            <form
+                method="post"
+                action="{{ path('gestion_seances') }}"
+                class="form-ajout-seance"
+            >
+                <input
+                    type="hidden"
+                    name="_token"
+                    value="{{ csrf_token('ajouter_seance') }}"
+                >
+
+                <div class="champ-formulaire">
+                    <label for="film">Film</label>
+                    <select id="film" name="film" required>
+                        <option value="">Sélectionner un film</option>
+                        {% for film in films %}
+                            <option value="{{ film.idFilm }}">
+                                {{ film.nomFilm }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="champ-formulaire">
+                    <label for="salle">Salle</label>
+                    <select id="salle" name="salle" required>
+                        <option value="">Sélectionner une salle</option>
+                        {% for numero in salles %}
+                            <option value="{{ numero }}">
+                                Salle {{ numero }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="champ-formulaire">
+                    <label for="dateSeance">Date</label>
+                    <input
+                        id="dateSeance"
+                        type="date"
+                        name="dateSeance"
+                        required
+                    >
+                </div>
+
+                <div class="champ-formulaire">
+                    <label for="horaireSeance">Horaire</label>
+                    <input
+                        id="horaireSeance"
+                        type="time"
+                        name="horaireSeance"
+                        required
+                    >
+                </div>
+
+                <div class="formulaire-actions">
+                    <button class="bouton bouton-ajout" type="submit">
+                        + Ajouter la séance
+                    </button>
+                </div>
+            </form>
+        </section>
+
+    </main>
+{% endblock %}
