@@ -1,3 +1,4 @@
+ 
 {% extends 'base.html.twig' %}
 
 {% block title %}Administration - Grand Cinéma{% endblock %}
@@ -14,33 +15,40 @@
 
         <h1 class="admin-title">Administration Grand Cinéma</h1>
 
-        {# ===== BOUTONS DE NAVIGATION ===== #}
+        {# Navigation vers les pages de gestion #}
         <nav class="admin-navigation">
-            <a href="{{ path('admin_film_index') }}" class="admin-nav-button">Gestion des films</a>
-            <a href="#seances" class="admin-nav-button">Gestion des séances</a>
-            <a href="#reservations" class="admin-nav-button">Gestion des réservations</a>
+            <a href="{{ path('admin_film_index') }}" class="admin-nav-button">
+                Gestion des films
+            </a>
+
+            <a href="{{ path('gestion_seances') }}" class="admin-nav-button">
+                Gestion des séances
+            </a>
+
+            <a href="{{ path('gestion_reservations') }}" class="admin-nav-button">
+                Gestion des réservations
+            </a>
         </nav>
 
-        {# ===== CHIFFRES CLÉS ===== #}
+        {# Chiffres clés #}
         <section class="stat-grid">
 
             <article class="stat-card">
                 <p class="stat-label">Films à l'affiche</p>
                 <p class="stat-number">{{ stats.nbFilms }}</p>
-                <a href="{{ path('admin_film_index') }}" class="stat-link">Gérer les films</a>
             </article>
 
             <article class="stat-card">
                 <p class="stat-label">Séances programmées</p>
                 <p class="stat-number">{{ stats.nbSeances }}</p>
-                <p class="stat-info">{{ stats.seancesAujourdhui }} aujourd'hui</p>
-                <a href="#seances" class="stat-link">Gérer les séances</a>
+                <p class="stat-info">
+                    {{ stats.seancesAujourdhui }} aujourd'hui
+                </p>
             </article>
 
             <article class="stat-card">
                 <p class="stat-label">Réservations payées</p>
                 <p class="stat-number">{{ stats.nbReservations }}</p>
-                <a href="#reservations" class="stat-link">Suivre les réservations</a>
             </article>
 
             <article class="stat-card stat-card-yellow">
@@ -48,15 +56,16 @@
                 <p class="stat-number">{{ stats.tauxRemplissage }}%</p>
 
                 <div class="progress">
-                    <div class="progress-fill"
-                         style="width: {{ stats.tauxRemplissage }}%">
-                    </div>
+                    <div
+                        class="progress-fill"
+                        style="width: {{ stats.tauxRemplissage }}%"
+                    ></div>
                 </div>
             </article>
 
         </section>
 
-        {# ===== REMPLISSAGE ET AFFLUENCE ===== #}
+        {# Statistiques de remplissage et d'affluence #}
         <section class="admin-row">
 
             <article class="admin-card">
@@ -75,9 +84,10 @@
                             </div>
 
                             <div class="progress">
-                                <div class="progress-fill {{ ligne.taux < 50 ? 'low' : '' }}"
-                                     style="width: {{ ligne.taux }}%">
-                                </div>
+                                <div
+                                    class="progress-fill {{ ligne.taux < 50 ? 'low' : '' }}"
+                                    style="width: {{ ligne.taux|default(0)|round }}%"
+                                ></div>
                             </div>
                         </div>
                     {% endfor %}
@@ -98,9 +108,10 @@
                             <div class="chart-col">
                                 <span class="chart-value">{{ jour.valeur }}</span>
 
-                                <div class="chart-bar {{ jour.festival ? 'festival' : '' }}"
-                                     style="height: {{ (jour.valeur / maxAffluence * 100)|round }}%">
-                                </div>
+                                <div
+                                    class="chart-bar {{ jour.festival ? 'festival' : '' }}"
+                                    style="height: {{ (jour.valeur / maxAffluence * 100)|round }}%"
+                                ></div>
 
                                 <span class="chart-day">{{ jour.jour }}</span>
                             </div>
@@ -111,89 +122,25 @@
 
         </section>
 
-        {# ===== GESTION DES FILMS ===== #}
-        <section id="films" class="admin-card">
-            <h2 class="card-title">Gestion des films</h2>
-
-            {% if films is empty %}
-                <p class="empty-text">Aucun film enregistré.</p>
-            {% else %}
-                <div class="table-wrap">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Identifiant</th>
-                                <th>Affiche</th>
-                                <th>Nom du film</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {% for film in films %}
-                                <tr>
-                                    <td>{{ film.idFilm }}</td>
-
-                                    <td>
-                                        {% if film.imageFilm %}
-                                            <img
-                                                src="{{ asset('image/' ~ film.imageFilm) }}"
-                                                alt="Affiche de {{ film.nomFilm }}"
-                                                class="film-poster"
-                                                loading="lazy"
-                                            >
-                                        {% else %}
-                                            <span class="empty-text">Pas d'affiche</span>
-                                        {% endif %}
-                                    </td>
-
-                                    <td>{{ film.nomFilm }}</td>
-                                    <td>{{ film.description }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
-        </section>
-
-        {# ===== GESTION DES SÉANCES ===== #}
-        <section id="seances" class="admin-card">
-            <h2 class="card-title">Gestion des séances</h2>
-
-            {% if seances is empty %}
-                <p class="empty-text">Aucune séance programmée.</p>
-            {% else %}
-                <div class="table-wrap">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Film</th>
-                                <th>Date</th>
-                                <th>Horaire</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {% for seance in seances %}
-                                <tr>
-                                    <td>{{ seance.film.nomFilm }}</td>
-                                    <td>{{ seance.dateSeance|date('d/m/Y') }}</td>
-                                    <td>{{ seance.horaireSeance|date('H:i') }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
-        </section>
-
-        {# ===== GESTION DES RÉSERVATIONS ===== #}
+        {# Dernières réservations uniquement #}
         <section id="reservations" class="admin-card">
-            <h2 class="card-title">Gestion des réservations</h2>
+            <div class="card-heading">
+                <div>
+                    <h2 class="card-title">Dernières réservations</h2>
+                    <p class="card-subtitle">
+                        Consultez les réservations les plus récentes.
+                    </p>
+                </div>
+
+                <a href="{{ path('gestion_reservations') }}" class="admin-nav-button">
+                    Voir toutes les réservations
+                </a>
+            </div>
 
             {% if dernieresReservations is empty %}
-                <p class="empty-text">Aucune réservation à afficher.</p>
+                <p class="empty-text">
+                    Aucune réservation à afficher.
+                </p>
             {% else %}
                 <div class="table-wrap">
                     <table class="admin-table">
@@ -202,7 +149,7 @@
                                 <th>Client</th>
                                 <th>Film</th>
                                 <th>Places</th>
-                                <th>Date</th>
+                                <th>Date de séance</th>
                                 <th>Statut</th>
                             </tr>
                         </thead>

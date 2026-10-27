@@ -21,6 +21,7 @@ security:
             entry_point: App\Security\TurnstileLoginAuthenticator
             logout:
                 path: app_logout
+                target: app_accueil
                 enable_csrf: true
 
     access_control:

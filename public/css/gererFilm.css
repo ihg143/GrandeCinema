@@ -1,14 +1,12 @@
 /* ========================================
    GRANDCINÉ — GESTION DES FILMS
-   Le header n'est plus affecté : .admin est pleine largeur,
-   et seuls .flash et .bloc sont centrés / limités en largeur.
    ======================================== */
 
 :root {
     --fond: #111111;
     --carte: #1b1b1b;
     --bord: #333333;
-    --jaune: #ffd000;
+    --jaune: #ffcc00;
     --rouge: #d62828;
     --texte: #ffffff;
     --texte-doux: #b5b5b5;
@@ -21,23 +19,22 @@ body {
     color: var(--texte);
 }
 
-/* Conteneur pleine largeur : ne touche pas au header */
 .admin {
     width: 100%;
     max-width: none;
     margin: 0;
     padding: 0 0 80px;
     color: var(--texte);
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-/* box-sizing limité au contenu de la page (pas au header) */
 .admin .bloc,
 .admin .bloc *,
 .admin .flash {
     box-sizing: border-box;
 }
 
-/* Le contenu est centré et limité en largeur ici */
+/* Contenu centré */
 .admin > .bloc {
     width: 100%;
     max-width: 1450px;
@@ -48,12 +45,19 @@ body {
 /* ===== TITRES ===== */
 
 .admin .titre {
-    margin: 0 0 28px;
+    margin: 0 0 20px;
     padding-left: 20px;
     border-left: 6px solid var(--jaune);
     color: var(--texte);
     font-size: 2.2rem;
     font-weight: 700;
+}
+
+.admin .description {
+    margin: 0 0 24px;
+    color: var(--texte-doux);
+    font-size: 1rem;
+    line-height: 1.6;
 }
 
 /* ===== MESSAGE DE CONFIRMATION ===== */
@@ -69,11 +73,155 @@ body {
     color: var(--texte);
 }
 
-/* ===== TABLEAU ===== */
+/* ========================================
+   RECHERCHE ET FILTRES
+   ======================================== */
+
+.admin .filtres-films {
+    display: grid;
+    grid-template-columns:
+        minmax(220px, 2fr)
+        minmax(160px, 1fr)
+        minmax(180px, 1fr)
+        auto;
+    align-items: end;
+    gap: 16px;
+    width: 100%;
+    margin: 28px 0 20px;
+    padding: 24px;
+    border: 1px solid #2e2e2e;
+    border-radius: 12px;
+    background: #181818;
+}
+
+.admin .champ-filtre {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+
+.admin .champ-filtre label {
+    display: block;
+    margin: 0;
+    color: #eeeeee;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.admin .champ-filtre input,
+.admin .champ-filtre select {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    height: 54px;
+    margin: 0;
+    padding: 0 14px;
+    border: 1px solid #383838;
+    border-radius: 8px;
+    background: #0d0d0d;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 15px;
+    color-scheme: dark;
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.admin .champ-filtre input::placeholder {
+    color: #929292;
+}
+
+.admin .champ-filtre input:focus,
+.admin .champ-filtre select:focus {
+    border-color: var(--jaune);
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(255 204 0 / 15%);
+}
+
+/* Boutons des filtres */
+
+.admin .actions-filtres {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin .filtres-films .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 54px;
+    margin: 0;
+    padding: 0 22px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+/* Filtrer : jaune et noir */
+
+.admin .filtres-films .btn-jaune {
+    border-color: var(--jaune);
+    background: var(--jaune);
+    color: #000000;
+}
+
+.admin .filtres-films .btn-jaune:hover {
+    border-color: #e6b800;
+    background: #e6b800;
+    color: #000000;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgb(255 204 0 / 18%);
+}
+
+/* Réinitialiser : gris et blanc */
+
+.admin .filtres-films .btn-reset {
+    border-color: #414141;
+    background: #292929;
+    color: #ffffff;
+}
+
+.admin .filtres-films .btn-reset:hover {
+    border-color: var(--jaune);
+    background: #353535;
+    color: var(--jaune);
+    transform: translateY(-1px);
+}
+
+/* Résultats de recherche */
+
+.admin .resultats {
+    margin: 20px 0;
+    color: var(--texte-doux);
+    font-size: 14px;
+}
+
+.admin .sans-affiche {
+    color: var(--texte-doux);
+    font-size: 13px;
+}
+
+/* ========================================
+   TABLEAU DES FILMS
+   ======================================== */
 
 .admin .table-wrap {
     width: 100%;
     overflow-x: auto;
+    border: 1px solid var(--bord);
     border-radius: 10px;
     background: var(--carte);
 }
@@ -93,13 +241,13 @@ body {
 
 .admin .table thead th {
     padding: 20px 18px;
+    border: 0;
+    border-bottom: 1px solid var(--bord);
     background: #000000;
     color: var(--jaune);
     font-weight: 700;
     text-align: left;
     white-space: nowrap;
-    border: 0;
-    border-bottom: 1px solid var(--bord);
 }
 
 /* Cellules */
@@ -107,12 +255,12 @@ body {
 .admin .table tbody td {
     height: 130px;
     padding: 16px 18px;
+    border: 0;
+    border-bottom: 1px solid var(--bord);
     background: var(--carte);
     color: var(--texte);
     text-align: left;
     vertical-align: middle;
-    border: 0;
-    border-bottom: 1px solid var(--bord);
 }
 
 .admin .table tbody tr:hover td {
@@ -130,11 +278,11 @@ body {
     width: 68px;
     height: 96px;
     margin: 0;
-    object-fit: cover;
     border-radius: 6px;
+    object-fit: cover;
 }
 
-/* Colonne Actions */
+/* Actions du tableau */
 
 .admin .table td.actions {
     white-space: nowrap;
@@ -148,7 +296,9 @@ body {
     vertical-align: middle;
 }
 
-/* Boutons (tableau + formulaire) */
+/* ========================================
+   BOUTONS DU TABLEAU ET DU FORMULAIRE
+   ======================================== */
 
 .admin .bloc .btn {
     display: inline-flex;
@@ -157,7 +307,7 @@ body {
     min-height: 46px;
     margin: 0;
     padding: 10px 20px;
-    border: 0;
+    border: 1px solid transparent;
     border-radius: 8px;
     font-family: inherit;
     font-size: 1rem;
@@ -166,35 +316,63 @@ body {
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
 }
 
+/* Bouton jaune */
+
 .admin .bloc .btn-jaune {
+    border-color: var(--jaune);
     background: var(--jaune);
     color: #000000;
 }
 
 .admin .bloc .btn-jaune:hover {
-    background: #ffe04a;
+    border-color: #e6b800;
+    background: #e6b800;
+    color: #000000;
+    transform: translateY(-1px);
 }
 
+/* Bouton rouge */
+
 .admin .bloc .btn-rouge {
+    border-color: var(--rouge);
     background: var(--rouge);
     color: #ffffff;
 }
 
 .admin .bloc .btn-rouge:hover {
+    border-color: #ef3b3b;
     background: #ef3b3b;
+    color: #ffffff;
+    transform: translateY(-1px);
 }
 
+/* Bouton contour */
+
 .admin .bloc .btn-contour {
+    border-color: var(--bord);
     background: transparent;
     color: var(--texte);
-    border: 1px solid var(--bord);
 }
 
 .admin .bloc .btn-contour:hover {
     border-color: var(--jaune);
+    background: #252525;
+    color: var(--jaune);
+}
+
+/* Focus clavier */
+
+.admin .bloc .btn:focus-visible,
+.admin .filtres-films .btn:focus-visible {
+    outline: 2px solid var(--jaune);
+    outline-offset: 3px;
 }
 
 /* Ligne sans film */
@@ -206,7 +384,9 @@ body {
     text-align: center;
 }
 
-/* ===== FORMULAIRE ===== */
+/* ========================================
+   FORMULAIRE D'AJOUT / MODIFICATION
+   ======================================== */
 
 .admin .formulaire {
     display: block;
@@ -231,20 +411,20 @@ body {
     display: block;
     width: 100%;
     max-width: 100%;
+    margin-bottom: 24px;
     padding: 12px 16px;
     border: 1px solid var(--bord);
     border-radius: 8px;
     background: var(--fond);
     color: var(--texte);
     font: inherit;
-    margin-bottom: 24px;
 }
 
 .admin .formulaire input:focus,
 .admin .formulaire textarea:focus,
 .admin .formulaire select:focus {
     border-color: var(--jaune);
-    outline: 2px solid rgb(255 208 0 / 20%);
+    outline: 2px solid rgb(255 204 0 / 20%);
 }
 
 .admin .formulaire textarea {
@@ -269,14 +449,23 @@ body {
     margin-top: 8px;
 }
 
-/* Accessibilité */
+/* ========================================
+   RESPONSIVE — TABLETTES
+   ======================================== */
 
-.admin .bloc .btn:focus-visible {
-    outline: 2px solid var(--jaune);
-    outline-offset: 3px;
+@media (max-width: 1100px) {
+    .admin .filtres-films {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin .actions-filtres {
+        grid-column: 1 / -1;
+    }
 }
 
-/* ===== RESPONSIVE ===== */
+/* ========================================
+   RESPONSIVE — MOBILES
+   ======================================== */
 
 @media (max-width: 700px) {
     .admin > .bloc {
@@ -290,6 +479,24 @@ body {
 
     .admin .titre {
         font-size: 1.7rem;
+    }
+
+    .admin .filtres-films {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        padding: 18px;
+    }
+
+    .admin .actions-filtres {
+        display: grid;
+        grid-column: auto;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .admin .filtres-films .btn {
+        width: 100%;
+        padding: 0 12px;
+        white-space: normal;
     }
 
     .admin .table thead th,

@@ -54,37 +54,47 @@
         </div>
 
     </section>
+{# ====== SÉANCES ====== #}
 
-    {# ====== SÉANCES ====== #}
+<section class="seances" id="seances">
+    <h2 class="section-title">Choisissez votre séance</h2>
 
-    <section class="seances" id="seances">
-        <h2 class="section-title">Choisissez votre séance</h2>
+    {% set maintenant = 'now'|date('Y-m-d H:i:s') %}
+    {% set seancesAVenir = [] %}
 
-        {% if seances is not empty %}
-            <div class="seances__liste">
-                {% for seance in seances %}
-                    <article class="seances__jour">
-                        <h3>
-                            {{ seance.dateSeance|date('d/m/Y') }}
-                        </h3>
+    {% for seance in seances %}
+        {% set dateHeureSeance = seance.dateSeance|date('Y-m-d')
+            ~ ' ' ~ seance.horaireSeance|date('H:i:s') %}
 
-                        <div class="seances__heures">
-                            <a href="{{ path('app_reservation', {id: seance.idSeance}) }}"
-                               class="btn btn--primary">
-                                {{ seance.horaireSeance|date('H:i') }}
-                                — Réserver ma place
-                            </a>
-                        </div>
-                    </article>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p class="film-empty">
-                Aucune séance programmée pour ce film.
-            </p>
+        {% if dateHeureSeance >= maintenant %}
+            {% set seancesAVenir = seancesAVenir|merge([seance]) %}
         {% endif %}
-    </section>
+    {% endfor %}
 
+    {% if seancesAVenir is not empty %}
+        <div class="seances__liste">
+            {% for seance in seancesAVenir %}
+                <article class="seances__jour">
+                    <h3>
+                        {{ seance.dateSeance|date('d/m/Y') }}
+                    </h3>
+
+                    <div class="seances__heures">
+                        <a href="{{ path('app_reservation', {id: seance.idSeance}) }}"
+                           class="btn btn--primary">
+                            {{ seance.horaireSeance|date('H:i') }}
+                            — Réserver ma place
+                        </a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="film-empty">
+            Aucune séance disponible pour le moment.
+        </p>
+    {% endif %}
+</section>
 </main>
 
 <footer class="footer">

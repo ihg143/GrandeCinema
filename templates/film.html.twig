@@ -1,4 +1,3 @@
-
 {% include 'partials/header.html.twig' %}
 
 <link rel="stylesheet" href="{{ asset('css/film.css') }}">
@@ -7,26 +6,7 @@
 
     <section class="page-films__top">
         <h1 class="section-title">Tous les films</h1>
-
-        {# Barre de recherche #}
-        <form class="film-search" action="{{ path('app_film') }}" method="get" role="search">
-            <input type="search"
-                   name="q"
-                   value="{{ q|default('') }}"
-                   placeholder="Rechercher un film..."
-                   aria-label="Rechercher un film">
-
-            <button type="submit" class="btn btn--primary">
-                Rechercher
-            </button>
-        </form>
     </section>
-
-    {% if q|default('') %}
-        <p class="film-result">
-            {{ films|length }} résultat(s) pour « {{ q }} »
-        </p>
-    {% endif %}
 
     <div class="films">
         {% for film in films %}
@@ -34,8 +14,10 @@
 
                 <div class="film__poster">
                     {% if film.imageFilm %}
-                        <img src="{{ asset('image/' ~ film.imageFilm) }}"
-                             alt="Affiche de {{ film.nomFilm }}">
+                        <img
+                            src="{{ asset('image/' ~ film.imageFilm) }}"
+                            alt="Affiche de {{ film.nomFilm }}"
+                        >
                     {% else %}
                         <span>{{ film.nomFilm }}</span>
                     {% endif %}
@@ -56,8 +38,10 @@
                         {{ film.description }}
                     </p>
 
-                    <a href="{{ path('app_film_detail', {id: film.idFilm}) }}"
-                       class="btn btn--primary btn--block">
+                    <a
+                        href="{{ path('app_film_detail', {id: film.idFilm}) }}"
+                        class="btn btn--primary btn--block"
+                    >
                         Voir le détail
                     </a>
                 </div>
@@ -65,16 +49,24 @@
             </article>
         {% else %}
             <p class="film-empty">
-                Aucun film trouvé. Essaie un autre titre.
+                Aucun film trouvé , Essaie un autre titre.
             </p>
         {% endfor %}
     </div>
 
 </main>
 
-<footer class="footer">
-    <p>© {{ 'now'|date('Y') }} GrandCiné</p>
-</footer>
+{# ---------- Footer ---------- #}
+<footer class="footer" id="contact">
 
+    <p class="footer-logo">GrandCiné</p>
+
+    <p>12 rue du Cinéma - 00000 Ville</p>
+
+    <p>Tél : 01 23 45 67 89 - contact@grandcine.fr</p>
+
+    <p>Ouvert tous les jours de 13h à 23h</p>
+
+</footer>
 </body>
 </html>

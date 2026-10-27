@@ -118,13 +118,13 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->mdp;
     }
 
-    public function getRoles(): array
-    {
-        $roles = $this->roles;
-        $roles[] = 'ROLE_USER';
+public function getRoles(): array
+{
+    $roles = $this->roles ?? [];
+    $roles[] = 'ROLE_USER';
 
-        return array_unique($roles);
-    }
+    return array_values(array_unique($roles));
+}
 
     public function setRoles(array $roles): static
     {

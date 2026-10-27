@@ -22,4 +22,16 @@ if (!window.userMenuReady) {
             if (dropdown) dropdown.classList.remove('show');
         }
     });
+
+    // Gestion de la croix de recherche
+const searchInput = document.querySelector('.film-search input');
+const searchForm = document.querySelector('.film-search');
+
+if (searchInput && searchForm) {
+    searchInput.addEventListener('search', function () {
+        if (this.value.trim() === '') {
+            window.location.href = searchForm.dataset.filmsUrl;
+        }
+    });
+}
 }

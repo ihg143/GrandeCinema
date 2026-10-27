@@ -16,9 +16,73 @@
         <p class="flash">{{ message }}</p>
     {% endfor %}
 
-    {# ---------- PARTIE 1 : tableau des films ---------- #}
+    {# Liste des films #}
     <section class="bloc">
         <h1 class="titre">Gérer les films</h1>
+        <p class="description">
+            Recherchez, filtrez et gérez les films du cinéma.
+        </p>
+
+        {# Barre de recherche et filtres #}
+        <form class="filtres-films"
+              method="get"
+              action="{{ path('admin_film_index') }}">
+
+            <div class="champ-filtre recherche-filtre">
+                <label for="q">Rechercher un film</label>
+                <input
+                    type="search"
+                    id="q"
+                    name="q"
+                    placeholder="Ex. : Le Robot sauvage"
+                    value="{{ filtres.q }}"
+                >
+            </div>
+
+            <div class="champ-filtre genre-filtre">
+                <label for="genre">Genre</label>
+                <select id="genre" name="genre">
+                    <option value="">Tous les genres</option>
+                    {% for genre in genres %}
+                        <option
+                            value="{{ genre }}"
+                            {% if filtres.genre == genre %}selected{% endif %}
+                        >
+                            {{ genre }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="champ-filtre date-filtre">
+                <label for="dateSortie">Date de sortie</label>
+                <input
+                    type="date"
+                    id="dateSortie"
+                    name="dateSortie"
+                    value="{{ filtres.dateSortie }}"
+                >
+            </div>
+
+            <div class="actions-filtres">
+                <button type="submit" class="btn btn-jaune">
+                    Filtrer
+                </button>
+
+                <a
+                    href="{{ path('admin_film_index') }}"
+                    class="btn btn-reset"
+                >
+                    Réinitialiser
+                </a>
+            </div>
+        </form>
+
+        <p class="resultats">
+            {{ films|length }}
+            film{{ films|length > 1 ? 's' : '' }}
+            trouvé{{ films|length > 1 ? 's' : '' }}
+        </p>
 
         <div class="table-wrap">
             <table class="table">
@@ -44,12 +108,12 @@
                                     alt="Affiche de {{ film.nomFilm }}"
                                 >
                             {% else %}
-                                Aucune affiche
+                                <span class="sans-affiche">Aucune affiche</span>
                             {% endif %}
                         </td>
 
                         <td>{{ film.nomFilm }}</td>
-                        <td>{{ film.genre ?? 'Non renseigné' }}</td>
+                        <td>{{ film.genre ?: 'Non renseigné' }}</td>
 
                         <td>
                             {% if film.duree %}
@@ -95,7 +159,7 @@
                 {% else %}
                     <tr>
                         <td colspan="6" class="vide">
-                            Aucun film pour le moment. Ajoute le premier ci-dessous.
+                            Aucun film ne correspond à votre recherche.
                         </td>
                     </tr>
                 {% endfor %}
@@ -104,14 +168,13 @@
         </div>
     </section>
 
-    {# ---------- PARTIE 2 : formulaire ajout / modification ---------- #}
+    {# Formulaire d'ajout ou de modification #}
     <section class="bloc" id="formulaire">
         <h2 class="titre">
             {{ isEdit ? 'Modifier le film' : 'Ajouter un film' }}
         </h2>
 
         {{ form_start(form, {attr: {class: 'formulaire'}}) }}
-
             {{ form_widget(form) }}
 
             <div class="formulaire-actions">
@@ -128,11 +191,11 @@
                     </a>
                 {% endif %}
             </div>
-
         {{ form_end(form) }}
     </section>
 
 </main>
+
 {% if isEdit %}
     <script>
         document.addEventListener('DOMContentLoaded', function () {

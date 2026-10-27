@@ -14,49 +14,80 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class AdminController extends AbstractController
 {
-    #[Route('/admin', name: 'app_admin')]
+    #[Route('/admin', name: 'app_admin', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function index(
         EntityManagerInterface $entityManager,
         PlaceRepository $placeRepository,
         ReservationRepository $reservationRepository
     ): Response {
-        $films = $entityManager->getRepository(Film::class)->findAll();
+        $filmRepository = $entityManager->getRepository(Film::class);
+        $seanceRepository = $entityManager->getRepository(Seance::class);
 
-        $seances = $entityManager->getRepository(Seance::class)->findBy(
+        $nbFilms = $filmRepository->count([]);
+
+        $seances = $seanceRepository->findBy(
             [],
             ['dateSeance' => 'ASC', 'horaireSeance' => 'ASC']
         );
 
-        $aujourdhui = (new \DateTime())->format('Y-m-d');
+        $maintenant = new \DateTimeImmutable();
+        $aujourdhui = $maintenant->format('Y-m-d');
         $seancesAujourdhui = 0;
 
-        $nbReservationsPayees = 0;
         $totalPlacesVendues = 0;
         $totalCapacite = 0;
 
-        $parFilm = [];  // [nomFilm => ['vendues' => x, 'capacite' => y]]
-        $parJour = [];  // [Y-m-d => nombre de spectateurs]
+        $parFilm = [];
+        $parJour = [];
 
         foreach ($seances as $seance) {
-            $jourCle = $seance->getDateSeance()->format('Y-m-d');
+            $dateSeance = $seance->getDateSeance();
+            $horaireSeance = $seance->getHoraireSeance();
+
+            if (!$dateSeance || !$horaireSeance) {
+                continue;
+            }
+
+            $jourCle = $dateSeance->format('Y-m-d');
 
             if ($jourCle === $aujourdhui) {
                 $seancesAujourdhui++;
             }
 
-            // Capacité = nombre de places de la salle (salle = simple entier)
+            // Construire la date et l'heure complètes de la séance.
+            $debutSeance = new \DateTimeImmutable(
+                $jourCle . ' ' . $horaireSeance->format('H:i:s')
+            );
+
+            // Ignorer les séances futures et celles en cours.
+            // On considère ici qu'une séance est terminée
+            // lorsque sa durée réelle est passée.
+            $film = $seance->getFilm();
+            $duree = $film?->getDuree() ?? 0;
+
+            if ($duree <= 0) {
+                // Sans durée connue, on ne peut pas déterminer
+                // précisément si la séance est terminée.
+                continue;
+            }
+
+            $finSeance = $debutSeance->modify('+' . $duree . ' minutes');
+
+            if ($finSeance > $maintenant) {
+                continue;
+            }
+
             $salle = $seance->getSalle();
+
             $capacite = $salle !== null
                 ? $placeRepository->count(['salle' => $salle])
                 : 0;
 
-            // Places vendues = places des réservations PAYÉES uniquement
             $vendues = 0;
 
             foreach ($seance->getReservations() as $reservation) {
                 if ($reservation->isPayee()) {
-                    $nbReservationsPayees++;
                     $vendues += $reservation->getReservationPlaces()->count();
                 }
             }
@@ -64,10 +95,13 @@ final class AdminController extends AbstractController
             $totalPlacesVendues += $vendues;
             $totalCapacite += $capacite;
 
-            $nomFilm = $seance->getFilm()?->getNomFilm() ?? 'Film inconnu';
+            $nomFilm = $film?->getNomFilm() ?? 'Film inconnu';
 
             if (!isset($parFilm[$nomFilm])) {
-                $parFilm[$nomFilm] = ['vendues' => 0, 'capacite' => 0];
+                $parFilm[$nomFilm] = [
+                    'vendues' => 0,
+                    'capacite' => 0,
+                ];
             }
 
             $parFilm[$nomFilm]['vendues'] += $vendues;
@@ -76,24 +110,30 @@ final class AdminController extends AbstractController
             $parJour[$jourCle] = ($parJour[$jourCle] ?? 0) + $vendues;
         }
 
-        // Taux de remplissage global
+        // Taux global calculé uniquement sur les séances terminées.
         $tauxGlobal = $totalCapacite > 0
-            ? (int) round($totalPlacesVendues / $totalCapacite * 100)
+            ? (int) round(($totalPlacesVendues / $totalCapacite) * 100)
             : 0;
 
-        // Taux de remplissage par film
+        $tauxGlobal = min(100, max(0, $tauxGlobal));
+
+        // Taux de remplissage par film, sur les séances terminées.
         $remplissage = [];
 
         foreach ($parFilm as $nomFilm => $donnees) {
+            $taux = $donnees['capacite'] > 0
+                ? (int) round(
+                    ($donnees['vendues'] / $donnees['capacite']) * 100
+                )
+                : 0;
+
             $remplissage[] = [
                 'film' => $nomFilm,
-                'taux' => $donnees['capacite'] > 0
-                    ? (int) round($donnees['vendues'] / $donnees['capacite'] * 100)
-                    : 0,
+                'taux' => min(100, max(0, $taux)),
             ];
         }
 
-        // Affluence : les 7 derniers jours avec des séances
+        // Affluence : les sept derniers jours ayant des séances terminées.
         ksort($parJour);
         $parJour = array_slice($parJour, -7, null, true);
 
@@ -101,17 +141,17 @@ final class AdminController extends AbstractController
 
         foreach ($parJour as $jour => $valeur) {
             $affluence[] = [
-                'jour' => (new \DateTime($jour))->format('d/m'),
+                'jour' => (new \DateTimeImmutable($jour))->format('d/m'),
                 'valeur' => $valeur,
                 'festival' => false,
             ];
         }
 
-        $maxAffluence = $affluence === []
-            ? 0
-            : max(array_column($affluence, 'valeur'));
+        $maxAffluence = !empty($affluence)
+            ? max(array_column($affluence, 'valeur'))
+            : 0;
 
-        // 10 dernières réservations (payées ou non, avec leur statut)
+        // Dix dernières réservations.
         $dernieres = $reservationRepository->findBy(
             [],
             ['idReservation' => 'DESC'],
@@ -124,31 +164,39 @@ final class AdminController extends AbstractController
             $seance = $resa->getSeance();
             $client = $resa->getUtilisateur();
 
+            $dateReservation = '-';
+
+            if ($seance && $seance->getDateSeance()) {
+                $dateReservation = $seance->getDateSeance()->format('d/m/Y');
+
+                if ($seance->getHoraireSeance()) {
+                    $dateReservation .= ' à '
+                        . $seance->getHoraireSeance()->format('H:i');
+                }
+            }
+
             $dernieresReservations[] = [
                 'client' => $client
-                    ? $client->getPrenom() . ' ' . $client->getNom()
+                    ? trim($client->getPrenom() . ' ' . $client->getNom())
                     : 'Inconnu',
                 'film' => $seance?->getFilm()?->getNomFilm() ?? '-',
                 'places' => $resa->getReservationPlaces()->count(),
-                'date' => $seance
-                    ? $seance->getDateSeance()->format('d/m/Y')
-                        . ' à ' . $seance->getHoraireSeance()->format('H:i')
-                    : '-',
+                'date' => $dateReservation,
                 'statut' => $resa->isPayee() ? 'Payée' : 'En attente',
             ];
         }
 
         $stats = [
-            'nbFilms' => count($films),
+            'nbFilms' => $nbFilms,
             'nbSeances' => count($seances),
             'seancesAujourdhui' => $seancesAujourdhui,
-            'nbReservations' => $nbReservationsPayees,
+            'nbReservations' => $reservationRepository->count([
+                'statut' => 'payee',
+            ]),
             'tauxRemplissage' => $tauxGlobal,
         ];
 
         return $this->render('admin/index.html.twig', [
-            'films' => $films,
-            'seances' => $seances,
             'stats' => $stats,
             'remplissage' => $remplissage,
             'affluence' => $affluence,

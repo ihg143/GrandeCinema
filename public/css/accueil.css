@@ -12,46 +12,118 @@ a {
 }
 
 /* ---------- Header ---------- */
+
+/* ===== Header accueil ===== */
 .headeracueil {
     position: relative;
-    background-color: black;
-    padding: 5px 20px;
+    background-color: #000000;
+    padding: 10px 20px;
     border-bottom: 3px solid #ffcc00;
+    box-sizing: border-box;
+    width: 100%;
 }
 
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 25px;
 }
 
+/* ===== Logo ===== */
 .logo {
     font-size: 28px;
+    font-weight: 800;
     color: #ffcc00;
     letter-spacing: 2px;
+    text-decoration: none;
+    white-space: nowrap;
 }
 
+/* ===== Navigation ===== */
 .nav {
     display: flex;
     align-items: center;
-    list-style-type: none;
+    gap: 12px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav li {
+    margin: 0;
+    padding: 0;
 }
 
 .nav li a {
-    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #ffffff;
     text-decoration: none;
-    padding: 5px 10px;
+    padding: 10px 12px;
     position: relative;
+    font-size: 15px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: color 0.2s ease;
 }
 
+/* ===== Icônes ===== */
+.nav li a i {
+    color: #ffcc00;
+    font-size: 16px;
+    line-height: 1;
+    transition: transform 0.2s ease;
+}
+
+/* ===== Survol ===== */
 .nav li a:hover {
     color: #ffcc00;
 }
 
-.search-form input {
-    padding: 6px 12px;
-    border-radius: 20px;
+.nav li a:hover i {
+    transform: scale(1.12);
+}
+/* Barre de recherche du header */
+.header-container > .film-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.header-container > .film-search input {
+    width: 190px;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.header-container > .film-search button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 125px;
+    height: 40px;
+    padding: 0 18px;
     border: none;
+    border-radius: 10px;
+    background: #ffcc00;
+    color: #000;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.header-container > .film-search button:hover {
+    background: #e6b800;
 }
 
 .burger {
@@ -62,7 +134,20 @@ a {
     font-size: 30px;
     cursor: pointer;
 }
+.header-container > .film-search button {
+    height: 40px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 10px;
+    background: #ffcc00;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+}
 
+.header-container > .film-search button:hover {
+    background: #e6b800;
+}
 /* ---------- Zone utilisateur (Admin + profil) ---------- */
 #menu-user,
 #menu-user li {
@@ -393,16 +478,184 @@ a {
     font-weight: bold;
 }
 
-/* ---------- Tablette ---------- */
+/* ===== Section tarifs ===== */
+.tarif-section {
+    background: #111111;
+    padding: 60px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 55px;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    box-sizing: border-box;
+}
+
+/* ===== Carte du tarif ===== */
+.tarif-card {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    width: 100%;
+    max-width: 1064px;
+    padding: 36px 44px;
+    background: #151515;
+    border: 1px solid #ffc400;
+    border-radius: 20px;
+    box-shadow: 0 0 12px rgba(255, 196, 0, 0.12);
+    box-sizing: border-box;
+}
+
+.tarif-price {
+    flex: 0 0 250px;
+    text-align: center;
+    color: #ffc400;
+}
+
+.tarif-icon {
+    display: block;
+    width: 46px;
+    height: 46px;
+    margin: 0 auto 8px;
+}
+
+.tarif-amount {
+    font-size: 3.2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #ffc400;
+}
+
+.tarif-unit {
+    margin-top: 6px;
+    font-size: 0.95rem;
+    color: #ffffff;
+}
+
+.tarif-divider {
+    align-self: stretch;
+    flex: 0 0 1px;
+    background: #333333;
+}
+
+.tarif-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.tarif-title {
+    margin: 0 0 14px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.tarif-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    margin-bottom: 16px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #111111;
+    background: #ffc400;
+    border-radius: 20px;
+}
+
+.tarif-text {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #e5e5e5;
+}
+
+/* ===== Barre des avantages ===== */
+.features-bar {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 100%;
+    max-width: 1376px;
+    padding: 24px 10px;
+    background: #151515;
+    border: 1px solid #292929;
+    border-radius: 16px;
+    box-sizing: border-box;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    min-width: 0;
+    padding: 8px 16px;
+    border-right: 1px solid #292929;
+}
+
+.feature-item:last-child {
+    border-right: none;
+}
+
+.feature-icon {
+    display: block;
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    color: #ffc400;
+}
+
+.feature-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.feature-text strong {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.feature-text span {
+    font-size: 0.78rem;
+    color: #cccccc;
+}
+
+/* ===== Tablettes ===== */
 @media (max-width: 1100px) {
     .liste-films {
         grid-template-columns: repeat(3, 1fr);
     }
+
+    .tarif-card {
+        max-width: 850px;
+        gap: 28px;
+        padding: 32px;
+    }
+
+    .tarif-price {
+        flex-basis: 200px;
+    }
+
+    .features-bar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        row-gap: 18px;
+    }
+
+    .feature-item:nth-child(2) {
+        border-right: none;
+    }
+
+    .feature-item:nth-child(3) {
+        border-right: 1px solid #292929;
+    }
+
+    .feature-item:nth-child(4) {
+        border-right: none;
+    }
 }
 
-/* ---------- Téléphone ---------- */
+/* ===== Téléphones ===== */
 @media (max-width: 800px) {
-
     html,
     body {
         max-width: 100%;
@@ -414,7 +667,7 @@ a {
         height: auto;
     }
 
-    /* Header + burger */
+    /* Header et menu burger */
     .header-container {
         flex-wrap: wrap;
     }
@@ -481,13 +734,13 @@ a {
 
     .banniere-genre {
         font-size: 14px;
-        margin: 0 0 6px 0;
+        margin: 0 0 6px;
     }
 
     .banniere-titre {
         font-size: 32px;
         line-height: 1.1;
-        margin: 6px 0 12px 0;
+        margin: 6px 0 12px;
     }
 
     .banniere-resume {
@@ -506,10 +759,10 @@ a {
         font-size: 15px;
         line-height: 1.2;
         padding: 12px 16px;
-        margin: 0 0 12px 0;
+        margin: 0 0 12px;
     }
 
-    /* Films : 2 colonnes */
+    /* Films */
     .affiche {
         padding: 30px 5%;
     }
@@ -519,7 +772,7 @@ a {
     }
 
     .liste-films {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 16px;
     }
 
@@ -546,12 +799,98 @@ a {
         margin-bottom: 8px;
     }
 
-    /* Tarifs */
+    /* Anciens tarifs */
     .liste-tarifs {
         flex-direction: column;
     }
 
     .tarif {
         width: auto;
+    }
+
+    /* Nouvelle section tarif */
+    .tarif-section {
+        padding: 40px 16px;
+        gap: 30px;
+    }
+
+    .tarif-card {
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        width: 100%;
+        padding: 28px 22px;
+        text-align: center;
+    }
+
+    .tarif-price {
+        flex: 0 0 auto;
+    }
+
+    .tarif-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .tarif-amount {
+        font-size: 2.8rem;
+    }
+
+    .tarif-divider {
+        align-self: auto;
+        flex: 0 0 1px;
+        width: 100%;
+        height: 1px;
+    }
+
+    .tarif-info {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .tarif-title {
+        font-size: 1.3rem;
+    }
+
+    .tarif-text {
+        font-size: 0.9rem;
+        overflow-wrap: anywhere;
+    }
+
+    .features-bar {
+        grid-template-columns: minmax(0, 1fr);
+        width: 100%;
+        padding: 12px;
+    }
+
+    .feature-item,
+    .feature-item:nth-child(3) {
+        justify-content: flex-start;
+        gap: 14px;
+        min-width: 0;
+        border-right: none;
+        border-bottom: 1px solid #292929;
+        padding: 14px 10px;
+    }
+
+    .feature-item:last-child {
+        border-bottom: none;
+    }
+
+    .feature-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .feature-text {
+        min-width: 0;
+    }
+
+    .feature-text strong {
+        font-size: 0.82rem;
+    }
+
+    .feature-text span {
+        font-size: 0.75rem;
     }
 }

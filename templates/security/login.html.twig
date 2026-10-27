@@ -14,7 +14,7 @@
 
 <body>
     <section>
-        <form action="{{ path('app_login') }}" method="post">
+        <form action="{{ path('app_login') }}" method="post" data-turbo="false">
             <h1>Connexion</h1>
 
             {% for message in app.flashes('success') %}
@@ -88,14 +88,10 @@
             </div>
         </form>
     </section>
-</body>
     <script>
         async function verifierConfirmation() {
             try {
-                const response = await fetch(
-                    "{{ path('app_verify_email_status') }}"
-                );
-
+                const response = await fetch("{{ path('app_verify_email_status') }}");
                 const data = await response.json();
 
                 if (data.confirmed) {
@@ -106,19 +102,34 @@
                         message.className = 'message-success';
 
                         const form = document.querySelector('form');
-                        form.insertBefore(
-                            message,
-                            form.querySelector('h1').nextSibling
-                        );
+                        form.insertBefore(message, form.querySelector('h1').nextSibling);
                     }
 
                     message.textContent = data.message;
+                    clearInterval(window.minuterieConfirmation);
                 }
             } catch (error) {
                 console.error('Erreur de vérification :', error);
             }
         }
 
-        setInterval(verifierConfirmation, 3000);
+        clearInterval(window.minuterieConfirmation);
+        window.minuterieConfirmation = setInterval(verifierConfirmation, 3000);
+
+        // Arrêt dès que le formulaire de connexion est envoyé
+        const formulaire = document.querySelector('form');
+        if (formulaire) {
+            formulaire.addEventListener('submit', () => {
+                clearInterval(window.minuterieConfirmation);
+            });
+        }
+
+        document.addEventListener('turbo:before-visit', () => {
+            clearInterval(window.minuterieConfirmation);
+        }, { once: true });
+        window.addEventListener('pagehide', () => {
+            clearInterval(window.minuterieConfirmation);
+        });
     </script>
+</body>
 </html>

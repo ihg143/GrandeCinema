@@ -6,6 +6,7 @@
     <meta name="turbo-prefetch" content="false">
     <title>GC - Le Grand Cinéma</title>
     <link rel="stylesheet" href="{{ asset('css/accueil.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ asset('image/logo.png') }}">
     <script src="{{ asset('js/header.js') }}" defer></script>
 </head>
@@ -18,63 +19,112 @@
 
             <h1 class="logo">GrandCiné</h1>
 
-           <button class="burger" id="burger" type="button" aria-label="Menu"
-        onclick="this.closest('.header-container').classList.toggle('open'); this.textContent = this.closest('.header-container').classList.contains('open') ? '✕' : '☰';">☰</button>
+            <button class="burger" id="burger" type="button" aria-label="Menu"
+                onclick="this.closest('.header-container').classList.toggle('open'); this.textContent = this.closest('.header-container').classList.contains('open') ? '✕' : '☰';">☰</button>
 
             <nav id="menu-nav">
                 <ul class="nav">
-                    <li><a href="{{ path('app_accueil') }}">Accueil</a></li>
-                    <li><a href="#affiche">À l'affiche</a></li>
-                    <li><a href="{{ path('app_film') }}">Séances</a></li>
-                    <li><a href="#tarifs">Tarifs</a></li>
-                    <li><a href="#contact">Contact</a></li>
+
+                    <li>
+                        <a href="{{ path('app_accueil') }}">
+                            <i class="fa-solid fa-house" aria-hidden="true"></i>
+                            Accueil
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ path('app_accueil') }}#affiche">
+                            <i class="fa-solid fa-film" aria-hidden="true"></i>
+                            À l'affiche
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ path('app_film') }}">
+                            <i class="fa-solid fa-clapperboard" aria-hidden="true"></i>
+                            Films
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#a-propos">
+                            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                            À propos
+                        </a>
+                    </li>
+
                 </ul>
             </nav>
 
-            <form class="search-form" id="menu-search" action="#" method="get">
-                <input type="search" name="q" placeholder="Recherche">
+            {# Barre de recherche #}
+            <form class="film-search"
+                  action="{{ path('app_film') }}"
+                  method="get"
+                  role="search"
+                   data-films-url="{{ path('app_film') }}"
+                  >
+
+                <input
+                    type="search"
+                    name="q"
+                    value="{{ app.request.query.get('q', '') }}"
+                    placeholder="Rechercher un film..."
+                    aria-label="Rechercher un film"
+                    {% if app.request.attributes.get('_route') != 'app_film' %}
+                      onfocus="window.location.href='{{ path('app_film') }}'"
+                    {% endif %}
+                >
+
+                <button type="submit" class="btn btn--primary">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    Rechercher
+                </button>
             </form>
 
             {# Connexion ou profil selon l'utilisateur #}
-{# Connexion ou profil selon l'utilisateur #}
-<ul class="nav" id="menu-user">
-    {% if app.user %}
-    {% if is_granted('ROLE_ADMIN') %}
-           <li>
-               <a href="{{ path('app_admin') }}" class="admin-link">
-                   <svg viewBox="0 0 24 24" width="36" height="36" aria-hidden="true">
-                       <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"
-                             fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-                       <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11V2z" fill="currentColor"/>
-                   </svg>
-            Admin
-               </a>
-           </li>
-       {% endif %}
+            <ul class="nav" id="menu-user">
+                {% if app.user %}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li>
+                            <a href="{{ path('app_admin') }}" class="admin-link">
+                                <svg viewBox="0 0 24 24" width="36" height="36" aria-hidden="true">
+                                    <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"
+                                          fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                    <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11V2z" fill="currentColor"/>
+                                </svg>
+                                Admin
+                            </a>
+                        </li>
+                    {% endif %}
 
-        <li class="user-menu">
-            <button type="button" class="user-toggle" id="user-toggle"
-                    aria-haspopup="true" aria-expanded="false" aria-label="Menu du profil">
-                <img class="iconcompte" src="{{ asset('image/user.png') }}" alt="">
-            </button>
+                    <li class="user-menu">
+                        <button type="button" class="user-toggle" id="user-toggle"
+                                aria-haspopup="true" aria-expanded="false" aria-label="Menu du profil">
+                            <img class="iconcompte" src="{{ asset('image/user.png') }}" alt="">
+                        </button>
 
-            <div class="user-dropdown" id="user-dropdown">
-                <div class="user-email">
-                    <img class="iconcompte" src="{{ asset('image/user.png') }}" alt="">
-                    <span>{{ app.user.userIdentifier }}</span>
-                </div>
+                        <div class="user-dropdown" id="user-dropdown">
+                            <div class="user-email">
+                                <img class="iconcompte" src="{{ asset('image/user.png') }}" alt="">
+                                <span>{{ app.user.userIdentifier }}</span>
+                            </div>
 
-                <a href="{{ path('app_profil') }}">👤 Mon profil</a>
-                <a href="{{ path('app_profil') }}">⚙️ Paramètres</a>
+                            <a href="{{ path('app_profil') }}">👤 Mon profil</a>
+                            <a href="{{ path('app_profil') }}">⚙️ Paramètres</a>
 
-                <hr>
+                            <hr>
 
-                  <a href="{{ path('app_logout',{'_csrf_token': csrf_token('logout')}) }} " data-turbo-prefetch="false">↪ Déconnexion</a>
-            </div>
-        </li>
-    {% else %}
-        <li><a href="{{ path('app_login') }}">Connexion</a></li>
-    {% endif %}
-</ul>
+                            <a href="{{ path('app_logout',{'_csrf_token': csrf_token('logout')}) }} " data-turbo-prefetch="false">↪ Déconnexion</a>
+                        </div>
+                    </li>
+                {% else %}
+                    <li>
+                 <a href="{{ path('app_login') }}">
+                  <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
+                Connexion
+                </a>
+                </li>
+                {% endif %}
+            </ul>
         </div>
     </header>
