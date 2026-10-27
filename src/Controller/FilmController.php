@@ -28,7 +28,7 @@ class FilmController extends AbstractController
             $films = $filmRepository->findAll();
         }
 
-        return $this->render('film.html.twig', [
+        return $this->render('film/film.html.twig', [
             'films' => $films,
             'q' => $q,
         ]);
