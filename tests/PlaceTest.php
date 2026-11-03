@@ -55,10 +55,16 @@ class PlaceTest extends TestCase
         self::assertSame($place, $place->setSalle(2));
     }
 
-    public function testIdIsNullBeforePersistence(): void
+    public function testValuesAfterMultipleChanges(): void
     {
         $place = new Place();
 
-        self::assertNull($place->getIdPlace());
+        $place->setNumeroPlace(8);
+        $place->setSalle(1);
+        $place->setNumeroPlace(12);
+        $place->setSalle(3);
+
+        self::assertSame(12, $place->getNumeroPlace());
+        self::assertSame(3, $place->getSalle());
     }
 }
