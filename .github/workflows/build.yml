@@ -58,6 +58,12 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
+      - name: Create test database
+        run: php bin/console doctrine:database:create --if-not-exists --env=test
+
+      - name: Create database schema
+        run: php bin/console doctrine:schema:create --env=test
+
       - name: Create coverage directory
         run: mkdir -p var/coverage
 
