@@ -15,7 +15,21 @@ on:
 jobs:
   sonarqube:
     name: SonarQube
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: grandecinema
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
@@ -32,17 +46,18 @@ jobs:
 
       - name: Create environment file
         run: |
-          @"
+          cat > .env <<'EOF'
           APP_ENV=test
           APP_SECRET=github-actions-test-secret
           DEFAULT_URI=http://localhost
-          "@ | Set-Content .env
+          DATABASE_URL="mysql://root:root@127.0.0.1:3306/grandecinema?serverVersion=10.11.0-MariaDB"
+          EOF
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
       - name: Create coverage directory
-        run: New-Item -ItemType Directory -Force -Path var/coverage
+        run: mkdir -p var/coverage
 
       - name: Run PHPUnit with coverage
         run: php -d xdebug.mode=coverage bin/phpunit --coverage-clover var/coverage/clover.xml
