@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-mail envoyé - GrandCiné</title>
+    <link rel="icon" type="image/png" href="{{ asset('image/logo.png') }}">
+    <link rel="stylesheet" href="{{ asset('css/reset-password.css') }}">
+</head>
+<body class="page">
+
+    <div class="card card-wide">
+
+        <h1 class="title">Vérifie ta boîte mail</h1>
+
+        <p class="text">
+            Si un compte correspond à cette adresse e-mail,
+            un message vient de t'être envoyé avec un lien
+            pour réinitialiser ton mot de passe.
+        </p>
+
+        <p class="text">
+            Ce lien expirera dans
+            {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+        </p>
+
+        <p class="text">
+            Tu n'as pas reçu l'e-mail ?
+            Vérifie tes courriers indésirables ou
+            <a class="text-link" href="{{ path('app_forgot_password_request') }}">réessaie</a>.
+        </p>
+
+        <a class="link" href="{{ path('app_login') }}">
+            Retour à la connexion
+        </a>
+
+    </div>
+
+</body>
+</html>

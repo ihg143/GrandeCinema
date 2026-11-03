@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Billet GrandCiné</title>
+    <style>
+        body { font-family: 'DejaVu Sans', sans-serif; color: #222; font-size: 13px; }
+        .billet { border: 2px solid #f5c518; padding: 0; }
+        .entete { background: #111; color: #f5c518; padding: 20px; text-align: center; }
+        .entete h1 { margin: 0; font-size: 26px; }
+        .entete p { margin: 4px 0 0; color: #fff; }
+        .corps { padding: 25px; }
+        .film { font-size: 22px; font-weight: bold; margin-bottom: 20px; }
+        table.infos { width: 100%; border-collapse: collapse; }
+        table.infos td { padding: 10px 0; border-bottom: 1px solid #ddd; }
+        table.infos th.visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        table.infos td.label { width: 35%; color: #777; text-transform: uppercase; font-size: 11px; }
+        table.infos td.valeur { font-weight: bold; }
+        .pied { text-align: center; padding: 15px; background: #f4f4f4; font-size: 11px; color: #666; }
+        .qr { text-align: center; padding: 20px 0 10px; }
+        .qr img { width: 160px; height: 160px; }
+        .qr p { margin: 6px 0 0; font-size: 11px; color: #777; }
+    </style>
+</head>
+<body>
+    <div class="billet">
+        <div class="entete">
+            <h1>GrandCiné</h1>
+            <p>Billet de cinéma</p>
+        </div>
+
+        <div class="corps">
+            <div class="film">{{ seance.film.nomFilm }}</div>
+
+            <table class="infos">
+                <thead>
+                    <tr>
+                        <th scope="col" class="visually-hidden">Information</th>
+                        <th scope="col" class="visually-hidden">Détail</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="label">Date</td>
+                        <td class="valeur">{{ seance.dateSeance|date('d/m/Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Horaire</td>
+                        <td class="valeur">{{ seance.horaireSeance|date('H:i') }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Salle</td>
+                        <td class="valeur">{{ seance.salle }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Places</td>
+                        <td class="valeur">
+                            {% for rp in places %}
+                                {{ rp.place.numeroPlace }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">Nom</td>
+                        <td class="valeur">{{ utilisateur.prenom }} {{ utilisateur.nom }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Total</td>
+                        <td class="valeur">{{ (places|length * 10)|number_format(2, ',', ' ') }} €</td>
+                    </tr>
+                    <tr>
+                        <td class="label">N° de réservation</td>
+                        <td class="valeur">#{{ reservation.idReservation }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="qr">
+                <img src="{{ qrCode }}" alt="QR Code de la réservation">
+                <p>Scannez ce QR code à l'entrée de la salle</p>
+            </div>
+        </div>
+
+        <div class="pied">
+            Présentez ce billet à l'entrée de la salle. Merci et bonne séance !
+        </div>
+    </div>
+</body>
+</html>

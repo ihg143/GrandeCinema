@@ -1,0 +1,174 @@
+ 
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration - Grand Cinéma{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+{% endblock %}
+
+{% block body %}
+    {% include 'partials/header.html.twig' %}
+
+    <main class="admin">
+
+        <h1 class="admin-title">Administration Grand Cinéma</h1>
+
+        {# Navigation vers les pages de gestion #}
+        <nav class="admin-navigation">
+            <a href="{{ path('admin_film_index') }}" class="admin-nav-button">
+                Gestion des films
+            </a>
+
+            <a href="{{ path('gestion_seances') }}" class="admin-nav-button">
+                Gestion des séances
+            </a>
+
+            <a href="{{ path('gestion_reservations') }}" class="admin-nav-button">
+                Gestion des réservations
+            </a>
+        </nav>
+
+        {# Chiffres clés #}
+        <section class="stat-grid">
+
+            <article class="stat-card">
+                <p class="stat-label">Films à l'affiche</p>
+                <p class="stat-number">{{ stats.nbFilms }}</p>
+            </article>
+
+            <article class="stat-card">
+                <p class="stat-label">Séances programmées</p>
+                <p class="stat-number">{{ stats.nbSeances }}</p>
+                <p class="stat-info">
+                    {{ stats.seancesAujourdhui }} aujourd'hui
+                </p>
+            </article>
+
+            <article class="stat-card">
+                <p class="stat-label">Réservations payées</p>
+                <p class="stat-number">{{ stats.nbReservations }}</p>
+            </article>
+
+            <article class="stat-card stat-card-yellow">
+                <p class="stat-label">Taux de remplissage</p>
+                <p class="stat-number">{{ stats.tauxRemplissage }}%</p>
+
+                <div class="progress">
+                    <div
+                        class="progress-fill"
+                        style="width: {{ stats.tauxRemplissage }}%"
+                    ></div>
+                </div>
+            </article>
+
+        </section>
+
+        {# Statistiques de remplissage et d'affluence #}
+        <section class="admin-row">
+
+            <article class="admin-card">
+                <h2 class="card-title">Taux de remplissage par film</h2>
+
+                {% if remplissage is empty %}
+                    <p class="empty-text">
+                        Aucune statistique disponible pour le moment.
+                    </p>
+                {% else %}
+                    {% for ligne in remplissage %}
+                        <div class="fill-line">
+                            <div class="fill-header">
+                                <span>{{ ligne.film }}</span>
+                                <span>{{ ligne.taux }}%</span>
+                            </div>
+
+                            <div class="progress">
+                                <div
+                                    class="progress-fill {{ ligne.taux < 50 ? 'low' : '' }}"
+                                    style="width: {{ ligne.taux|default(0)|round }}%"
+                                ></div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </article>
+
+            <article class="admin-card">
+                <h2 class="card-title">Pics d'affluence</h2>
+                <p class="card-subtitle">Nombre de spectateurs par jour.</p>
+
+                {% if affluence is empty or maxAffluence == 0 %}
+                    <p class="empty-text">
+                        Aucune donnée d'affluence disponible.
+                    </p>
+                {% else %}
+                    <div class="chart">
+                        {% for jour in affluence %}
+                            <div class="chart-col">
+                                <span class="chart-value">{{ jour.valeur }}</span>
+
+                                <div
+                                    class="chart-bar {{ jour.festival ? 'festival' : '' }}"
+                                    style="height: {{ (jour.valeur / maxAffluence * 100)|round }}%"
+                                ></div>
+
+                                <span class="chart-day">{{ jour.jour }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </article>
+
+        </section>
+
+        {# Dernières réservations uniquement #}
+        <section id="reservations" class="admin-card">
+            <div class="card-heading">
+                <div>
+                    <h2 class="card-title">Dernières réservations</h2>
+                    <p class="card-subtitle">
+                        Consultez les réservations les plus récentes.
+                    </p>
+                </div>
+
+                <a href="{{ path('gestion_reservations') }}" class="admin-nav-button">
+                    Voir toutes les réservations
+                </a>
+            </div>
+
+            {% if dernieresReservations is empty %}
+                <p class="empty-text">
+                    Aucune réservation à afficher.
+                </p>
+            {% else %}
+                <div class="table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Film</th>
+                                <th>Places</th>
+                                <th>Date de séance</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for resa in dernieresReservations %}
+                                <tr>
+                                    <td>{{ resa.client }}</td>
+                                    <td>{{ resa.film }}</td>
+                                    <td>{{ resa.places }}</td>
+                                    <td>{{ resa.date }}</td>
+                                    <td>{{ resa.statut }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </section>
+
+    </main>
+{% endblock %}

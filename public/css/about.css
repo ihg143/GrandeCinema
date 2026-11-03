@@ -1,0 +1,146 @@
+/* ---------- about ---------- */
+.about {
+    max-width: 1430px;
+    margin: 0 auto;
+    padding: 65px 24px 80px;
+    color: #fff;
+}
+
+.about__title {
+    font-size: 2.2rem;
+    margin: 0 0 35px;
+    padding-left: 20px;
+    border-left: 6px solid #ffc400;
+    line-height: 1.2;
+}
+
+.about__card {
+    display: flex;
+    align-items: stretch;
+    background: #1c1c1c;
+    border: 1px solid #303030;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 12px 35px rgb(0 0 0 / 20%);
+}
+
+.about__image {
+    flex: 0 0 40%;
+    min-height: 600px;
+    background: #111;
+}
+
+.about__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 600px;
+    object-fit: cover;
+}
+.about__content {
+    flex: 1;
+    min-width: 0;
+    padding: 38px 42px;
+}
+
+.about__eyebrow {
+    display: inline-block;
+    margin-bottom: 12px;
+    color: #ffc400;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.about__content h2 {
+    margin: 0 0 16px;
+    color: #ffc400;
+    font-size: 1.45rem;
+    line-height: 1.35;
+}
+
+.about__content h2:not(:first-of-type) {
+    margin-top: 30px;
+}
+
+.about__content p {
+    margin: 0 0 17px;
+    color: #ddd;
+    font-size: 0.98rem;
+    line-height: 1.8;
+}
+
+.about__content strong {
+    color: #ffc400;
+    font-weight: 700;
+}
+
+.about__signature {
+    margin-top: 28px !important;
+    padding-top: 22px;
+    border-top: 1px solid #393939;
+    font-style: italic;
+}
+
+.about__signature span {
+    color: #ffc400;
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Tablettes */
+@media (max-width: 1000px) {
+    .about {
+        padding: 50px 20px 60px;
+    }
+
+    .about__image {
+        flex-basis: 35%;
+    }
+
+    .about__content {
+        padding: 30px 26px;
+    }
+}
+
+/* Mobiles */
+@media (max-width: 800px) {
+    .about {
+        padding: 35px 16px 50px;
+    }
+
+    .about__title {
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+    }
+
+    .about__card {
+        flex-direction: column;
+    }
+
+    .about__image {
+        flex: auto;
+        min-height: 0;
+        height: 280px;
+    }
+
+    .about__image img {
+        min-height: 0;
+        height: 100%;
+        object-position: center;
+    }
+
+    .about__content {
+        padding: 27px 22px;
+    }
+
+    .about__content h2 {
+        font-size: 1.3rem;
+    }
+
+    .about__content p {
+        font-size: 0.95rem;
+        line-height: 1.75;
+    }
+}

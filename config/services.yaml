@@ -1,0 +1,22 @@
+
+# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+
+# Configuration de l'application
+parameters:
+    turnstile_secret_key: '%env(TURNSTILE_SECRET_KEY)%'
+    turnstile_site_key: '%env(TURNSTILE_SITE_KEY)%'
+
+services:
+    # Configuration par défaut
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # Enregistrement automatique des classes dans src/
+    App\:
+        resource: '../src/'
+
+    # Configuration du service Cloudflare Turnstile
+    App\Service\TurnstileService:
+        arguments:
+            $turnstileSecretKey: '%turnstile_secret_key%'

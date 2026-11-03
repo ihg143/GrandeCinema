@@ -1,0 +1,232 @@
+{% include 'partials/header.html.twig' %}
+<main>
+ {% for message in app.flashes('account_deleted') %}
+    <div class="account-notification">
+        <div class="notification-content">
+            <span>{{ message }}</span>
+        </div>
+        <div class="notification-progress"></div>
+    </div>
+{% endfor %}
+    {# ---------- Bannière ---------- #}
+    <section class="banniere">
+        <div class="banniere-texte">
+
+            <p class="banniere-genre">Action - Thriller | 2h28 </p>
+
+            <h2 class="banniere-titre">Gladiator II</h2>
+
+            <p class="banniere-resume">
+                    Des années après le règne de Maximus, Lucius est contraint de combattre dans l’arène du Colisée.
+            Animé par la vengeance, il défie les puissants de Rome pour retrouver sa liberté.
+            </p>
+
+            <a href="{{ path('app_film_detail', {'id': 7}) }}" class="bouton">
+                Réserver ma place
+            </a>
+
+            <a href="https://www.youtube.com/watch?v=zMIb0rQUoaM" class="bouton-contour"    target="_blank"
+          rel="noopener noreferrer">
+                Bande-annonce
+            </a>
+
+        </div>
+    </section>
+
+    {# ---------- Films récupérés depuis la base de données ---------- #}
+    <section class="affiche" id="affiche">
+
+        <h2 class="titre-section">À l'affiche</h2>
+
+        <div class="liste-films">
+
+            {% for film in films|slice(0, 4) %}
+
+                <div class="film">
+
+                    <a href="{{ path('app_film_detail', {id: film.idFilm}) }}">
+
+                        <div class="poster">
+                            {% if film.imageFilm %}
+                                <img
+                                    src="{{ asset('image/' ~ film.imageFilm) }}"
+                                    alt="{{ film.nomFilm }}"
+                                >
+                            {% else %}
+                                <span>{{ film.nomFilm }}</span>
+                            {% endif %}
+                        </div>
+
+                        <h3>{{ film.nomFilm }}</h3>
+
+                        {% if film.genre %}
+                            <p class="film__genre">{{ film.genre }}</p>
+                        {% endif %}
+
+                        <p>{{ film.description }}</p>
+
+                    </a>
+
+                </div>
+
+            {% else %}
+
+                <p>Aucun film disponible pour le moment.</p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+    {# ---------- Séances du jour récupérées depuis la base de données ---------- #}
+
+<section class="seances" id="seances">
+
+    <h2 class="titre-section">Séances du jour</h2>
+
+    {% for seance in seances %}
+
+        <div class="ligne-seance">
+
+            <p class="nom-film">
+                <a href="{{ path('app_film_detail', {id: seance.film.idFilm}) }}"
+                   style="color: inherit; text-decoration: none;">
+                    {{ seance.film.nomFilm }}
+                </a>
+            </p>
+
+            <div class="horaires">
+
+                <a href="{{ path('app_film_detail', {id: seance.film.idFilm}) }}">
+                    {{ seance.horaireSeance|date('H:i') }}
+                </a>
+
+            </div>
+
+        </div>
+
+    {% else %}
+
+        <p>Aucune séance prévue aujourd'hui.</p>
+
+    {% endfor %}
+
+</section>
+{# ===== Section Tarif ===== #}
+
+<section class="tarif-section">
+    <div class="tarif-card">
+        <div class="tarif-price">
+            <svg class="tarif-icon" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round"
+                 stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="6" width="18" height="12" rx="2"/>
+                <path d="M3 10h18"/>
+                <path d="M7 14h3"/>
+            </svg>
+
+            <div class="tarif-amount">10 €</div>
+            <div class="tarif-unit">par place</div>
+        </div>
+
+        <div class="tarif-divider"></div>
+
+        <div class="tarif-info">
+            <h2 class="tarif-title">Tarif normal</h2>
+            <span class="tarif-badge">Tarif unique</span>
+            <p class="tarif-text">
+                Pour le moment, toutes les places sont proposées
+                au tarif unique de 10 € par personne,
+                quelle que soit la séance.
+            </p>
+        </div>
+    </div>
+
+    <div class="features-bar">
+        <div class="feature-item">
+            <svg class="feature-icon" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round"
+                 stroke-linejoin="round" aria-hidden="true">
+                <rect x="4" y="3" width="16" height="18" rx="2"/>
+                <path d="M8 7h8M8 11h8M8 15h5"/>
+            </svg>
+            <div class="feature-text">
+                <strong>Réservez en ligne</strong>
+                <span>En quelques clics</span>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <svg class="feature-icon" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round"
+                 stroke-linejoin="round" aria-hidden="true">
+                <rect x="4" y="3" width="16" height="18" rx="2"/>
+                <path d="M8 7h8M8 11h8M8 15h8"/>
+            </svg>
+            <div class="feature-text">
+                <strong>Choisissez vos places</strong>
+                <span>En temps réel</span>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <svg class="feature-icon" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round"
+                 stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/>
+                <path d="m9 12 2 2 4-4"/>
+            </svg>
+            <div class="feature-text">
+                <strong>Paiement sécurisé</strong>
+                <span>Par Stripe</span>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <svg class="feature-icon" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round"
+                 stroke-linejoin="round" aria-hidden="true">
+                <path d="M13 2 4 14h7l-1 8 9-12h-7z"/>
+            </svg>
+            <div class="feature-text">
+                <strong>Votre billet</strong>
+                <span>Dématérialisé</span>
+            </div>
+        </div>
+    </div>
+</section>
+</main>
+
+{# ---------- Footer ---------- #}
+<footer class="footer" id="contact">
+
+    <p class="footer-logo">GrandCiné</p>
+
+    <p>13 rue du Cinéma - 1313 Ville</p>
+
+    <p>Tél : 01 23 45 67 89 - contact@grandcine.fr</p>
+
+    <p>Ouvert tous les jours de 13h à 23h</p>
+
+</footer>
+    <script>
+    document.querySelectorAll('.account-notification').forEach(notification => {
+        setTimeout(() => {
+            notification.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(30px)';
+
+            setTimeout(() => {
+                notification.remove();
+            }, 400);
+        }, 10000);
+    });
+</script>
+</body>
+</html>

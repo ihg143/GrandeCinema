@@ -1,0 +1,72 @@
+{% include 'partials/header.html.twig' %}
+
+<link rel="stylesheet" href="{{ asset('css/film.css') }}">
+
+<main class="page-films">
+
+    <section class="page-films__top">
+        <h1 class="section-title">Tous les films</h1>
+    </section>
+
+    <div class="films">
+        {% for film in films %}
+            <article class="film">
+
+                <div class="film__poster">
+                    {% if film.imageFilm %}
+                        <img
+                            src="{{ asset('image/' ~ film.imageFilm) }}"
+                            alt="Affiche de {{ film.nomFilm }}"
+                        >
+                    {% else %}
+                        <span>{{ film.nomFilm }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="film__body">
+                    <h2 class="film__title">
+                        {{ film.nomFilm }}
+                    </h2>
+
+                    {% if film.genre %}
+                        <p class="film__genre">
+                            {{ film.genre }}
+                        </p>
+                    {% endif %}
+
+                    <p class="film__info">
+                        {{ film.description }}
+                    </p>
+
+                    <a
+                        href="{{ path('app_film_detail', {id: film.idFilm}) }}"
+                        class="btn btn--primary btn--block"
+                    >
+                        Voir le détail
+                    </a>
+                </div>
+
+            </article>
+        {% else %}
+            <p class="film-empty">
+                Aucun film trouvé , Essaie un autre titre.
+            </p>
+        {% endfor %}
+    </div>
+
+</main>
+
+{# ---------- Footer ---------- #}
+<footer class="footer" id="contact">
+
+    <p class="footer-logo">GrandCiné</p>
+
+    <p>12 rue du Cinéma - 00000 Ville</p>
+
+    <p>Tél : 01 23 45 67 89 - contact@grandcine.fr</p>
+
+    <p>Ouvert tous les jours de 13h à 23h</p>
+
+</footer>
+</body>
+</html>

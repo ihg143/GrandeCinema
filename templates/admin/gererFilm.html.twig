@@ -1,0 +1,209 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gérer les films - GrandCiné{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/gererFilm.css') }}">
+{% endblock %}
+
+{% block body %}
+<main class="admin">
+
+    {% include 'partials/header.html.twig' %}
+
+    {% for message in app.flashes('success') %}
+        <p class="flash">{{ message }}</p>
+    {% endfor %}
+
+    {# Liste des films #}
+    <section class="bloc">
+        <h1 class="titre">Gérer les films</h1>
+        <p class="description">
+            Recherchez, filtrez et gérez les films du cinéma.
+        </p>
+
+        {# Barre de recherche et filtres #}
+        <form class="filtres-films"
+              method="get"
+              action="{{ path('admin_film_index') }}">
+
+            <div class="champ-filtre recherche-filtre">
+                <label for="q">Rechercher un film</label>
+                <input
+                    type="search"
+                    id="q"
+                    name="q"
+                    placeholder="Ex. : Le Robot sauvage"
+                    value="{{ filtres.q }}"
+                >
+            </div>
+
+            <div class="champ-filtre genre-filtre">
+                <label for="genre">Genre</label>
+                <select id="genre" name="genre">
+                    <option value="">Tous les genres</option>
+                    {% for genre in genres %}
+                        <option
+                            value="{{ genre }}"
+                            {% if filtres.genre == genre %}selected{% endif %}
+                        >
+                            {{ genre }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="champ-filtre date-filtre">
+                <label for="dateSortie">Date de sortie</label>
+                <input
+                    type="date"
+                    id="dateSortie"
+                    name="dateSortie"
+                    value="{{ filtres.dateSortie }}"
+                >
+            </div>
+
+            <div class="actions-filtres">
+                <button type="submit" class="btn btn-jaune">
+                    Filtrer
+                </button>
+
+                <a
+                    href="{{ path('admin_film_index') }}"
+                    class="btn btn-reset"
+                >
+                    Réinitialiser
+                </a>
+            </div>
+        </form>
+
+        <p class="resultats">
+            {{ films|length }}
+            film{{ films|length > 1 ? 's' : '' }}
+            trouvé{{ films|length > 1 ? 's' : '' }}
+        </p>
+
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Affiche</th>
+                        <th>Titre</th>
+                        <th>Genre</th>
+                        <th>Durée</th>
+                        <th>Date de sortie</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for film in films %}
+                    <tr>
+                        <td>
+                            {% if film.imageFilm %}
+                                <img
+                                    class="mini"
+                                    src="{{ asset('image/' ~ film.imageFilm) }}"
+                                    alt="Affiche de {{ film.nomFilm }}"
+                                >
+                            {% else %}
+                                <span class="sans-affiche">Aucune affiche</span>
+                            {% endif %}
+                        </td>
+
+                        <td>{{ film.nomFilm }}</td>
+                        <td>{{ film.genre ?: 'Non renseigné' }}</td>
+
+                        <td>
+                            {% if film.duree %}
+                                {{ film.duree }} min
+                            {% else %}
+                                Non renseignée
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if film.dateSortie %}
+                                {{ film.dateSortie|date('d/m/Y') }}
+                            {% else %}
+                                Non renseignée
+                            {% endif %}
+                        </td>
+
+                        <td class="actions">
+                            <a
+                                class="btn btn-jaune"
+                                href="{{ path('admin_film_edit', {id: film.idFilm}) }}#formulaire"
+                            >
+                                Modifier
+                            </a>
+
+                            <form
+                                method="post"
+                                action="{{ path('admin_film_delete', {id: film.idFilm}) }}"
+                                onsubmit="return confirm('Supprimer ce film ?');"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="_token"
+                                    value="{{ csrf_token('delete' ~ film.idFilm) }}"
+                                >
+
+                                <button class="btn btn-rouge" type="submit">
+                                    Supprimer
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="vide">
+                            Aucun film ne correspond à votre recherche.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    {# Formulaire d'ajout ou de modification #}
+    <section class="bloc" id="formulaire">
+        <h2 class="titre">
+            {{ isEdit ? 'Modifier le film' : 'Ajouter un film' }}
+        </h2>
+
+        {{ form_start(form, {attr: {class: 'formulaire'}}) }}
+            {{ form_widget(form) }}
+
+            <div class="formulaire-actions">
+                <button class="btn btn-jaune" type="submit">
+                    {{ isEdit ? 'Enregistrer les modifications' : 'Ajouter le film' }}
+                </button>
+
+                {% if isEdit %}
+                    <a
+                        class="btn btn-contour"
+                        href="{{ path('admin_film_index') }}"
+                    >
+                        Annuler
+                    </a>
+                {% endif %}
+            </div>
+        {{ form_end(form) }}
+    </section>
+
+</main>
+
+{% if isEdit %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('formulaire').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+    </script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,202 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil - GrandCiné{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
+{% endblock %}
+
+{% block body %}
+
+{% set prenom = app.user.prenom %}
+{% set nom = app.user.nom %}
+{% set email = app.user.email %}
+
+{% include 'partials/header.html.twig' %}
+<main class="profile">
+
+    {# ===== Bandeau du haut ===== #}
+    <section class="profile-hero">
+        <div class="profile-avatar">
+            {{ prenom|first|upper }}{{ nom|first|upper }}
+        </div>
+        <div class="profile-hero-text">
+            <h1 class="profile-name">{{ prenom }} {{ nom }}</h1>
+            <p class="profile-email">{{ email }}</p>
+        </div>
+         <li><a href="{{ path('app_logout', {'_csrf_token': csrf_token('logout')}) }}" class="btn-logout" data-turbo-prefetch="false">Déconnexion</a></li>
+
+    </section>
+
+    <div class="profile-layout">
+
+        {# ===== Menu à gauche ===== #}
+        <nav class="profile-menu">
+            <a href="#infos" class="profile-menu-link active">Mes informations</a>
+            <a href="#reservations" class="profile-menu-link">Mes réservations</a>
+            <a href="#password" class="profile-menu-link">Mot de passe</a>
+            <a href="#supprimer-compte" class="profile-menu-link">Supprimer mon compte</a>
+        </nav>
+
+        <div class="profile-content">
+
+            {# ===== Messages (succès / erreur) : alignés avec les blocs ===== #}
+            {% for type, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="flash flash-{{ type }}">{{ message }}</div>
+                {% endfor %}
+            {% endfor %}
+
+            {# ===== Informations personnelles ===== #}
+            <section id="infos" class="profile-block">
+                <h2 class="block-title">Mes informations</h2>
+                <p class="profile-info">Vous pouvez modifier vos informations personnelles ci-dessous.</p>
+
+                <form method="post" action="{{ path('app_profil') }}" class="profile-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="prenom">Prénom</label>
+                            <input type="text" id="prenom" name="prenom" value="{{ prenom }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="nom">Nom</label>
+                            <input type="text" id="nom" name="nom" value="{{ nom }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Adresse e-mail</label>
+                        <input type="email" id="email" name="email" value="{{ email }}">
+                    </div>
+
+                    <button type="submit" name="update_profile" class="btn btn-yellow">Enregistrer</button>
+                </form>
+            </section>
+
+            {# ===== Réservations ===== #}
+            <section id="reservations" class="profile-block">
+                <h2 class="block-title">Mes réservations</h2>
+
+                {% if reservationsDetails|length > 0 %}
+                    <div class="reservation-list">
+                        {% for item in reservationsDetails %}
+                            {% set seance = item.reservation.seance %}
+                            {% set film = seance.film %}
+                            {% set nbPlaces = item.places|length %}
+
+                            <article class="reservation-card">
+                                {% if film.affiche is defined and film.affiche %}
+                                    <img src="{{ asset('images/films/' ~ film.affiche) }}"
+                                         alt="Affiche de {{ film.nomFilm }}"
+                                         class="reservation-poster">
+                                {% endif %}
+
+                                <div class="reservation-info">
+                                    <h3 class="reservation-title">{{ film.nomFilm }}</h3>
+
+                                    <p class="reservation-date">
+                                        {{ seance.dateSeance|date('d/m/Y') }}
+                                        à {{ seance.horaireSeance|date('H:i') }}
+                                    </p>
+
+                                    <p class="reservation-salle">Salle {{ seance.salle }}</p>
+
+                                    <p class="reservation-places">
+                                        {{ nbPlaces }} place{{ nbPlaces > 1 ? 's' : '' }} :
+                                        {% for rp in item.places %}
+                                            {{ rp.place.numeroPlace }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </p>
+
+                                    <p class="reservation-total">
+                                        Total : {{ item.reservation.total|number_format(2, ',', ' ') }} €
+                                    </p>
+
+                                    <p class="reservation-statut">
+                                        {{ item.reservation.payee ? 'Payée' : 'En attente de paiement' }}
+                                    </p>
+                                </div>
+
+                                {% if item.reservation.payee %}
+                                    <a href="{{ path('app_billet', { id: item.reservation.idReservation }) }}"
+                                       target="_blank" class="btn btn-outline">Voir le billet</a>
+                                {% else %}
+                                    <a href="{{ path('app_paiement', { id: item.reservation.idReservation }) }}"
+                                       class="btn btn-yellow">Payer</a>
+                                {% endif %}
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty">
+                        <p>Vous n'avez aucune réservation pour le moment.</p>
+                        <a href="#" class="btn btn-yellow">Voir les films à l'affiche</a>
+                    </div>
+                {% endif %}
+            </section>
+
+            {# ===== Mot de passe ===== #}
+            <section id="password" class="profile-block">
+                <h2 class="block-title">Mot de passe</h2>
+
+                <form method="post" action="{{ path('app_profil') }}" class="profile-form">
+                    <div class="form-group">
+                        <label for="ancien">Mot de passe actuel</label>
+                        <input type="password" id="ancien" name="current_password">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nouveau">Nouveau mot de passe</label>
+                            <input type="password" id="nouveau" name="new_password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmer">Confirmer</label>
+                            <input type="password" id="confirmer" name="confirm_password">
+                        </div>
+                    </div>
+
+                    <button type="submit" name="update_password" class="btn btn-yellow">Changer le mot de passe</button>
+                </form>
+            </section>
+           
+{# ===== Suppression du compte ===== #}
+<section id="supprimer-compte" class="profile-block">
+    <h2 class="block-title">Supprimer mon compte</h2>
+
+    <p class="profile-info">
+        Attention : la suppression de votre compte est définitive.
+        Vous ne pourrez plus accéder à votre espace personnel.
+    </p>
+
+    <form method="post"
+          action="{{ path('app_supprimer_compte') }}"
+          data-turbo="false"
+          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer définitivement votre compte ?');">
+
+        <input type="hidden"
+               name="_token"
+               value="{{ csrf_token('delete_account') }}">
+
+        <div class="form-group">
+            <label for="delete_password">Mot de passe actuel</label>
+            <input
+                type="password"
+                id="delete_password"
+                name="current_password"
+                placeholder="Saisissez votre mot de passe actuel"
+                required
+            >
+        </div>
+
+        <button type="submit" class="btn-delete">
+            Supprimer mon compte
+        </button>
+    </form>
+</section>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

@@ -1,0 +1,109 @@
+
+{# Variables envoyées par GestionCinemaController::reservations() :
+   reservations, page, pages, total_filtre, total, confirmees, en_attente, annulees,
+   filtre_q, filtre_statut, filtre_date #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des réservations{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ asset('css/admin-reservations.css') }}">
+{% endblock %}
+
+{% block body %}
+ {% include 'partials/header.html.twig' %}
+<div class="page">
+
+  {# ----- Titre ----- #}
+  <div class="entete">
+    <h1>Gestion des réservations</h1>
+  </div>
+
+  {# ----- 4 cases de statistiques ----- #}
+  <div class="stats">
+    <div class="stat-box"><span>Total réservations</span><b>{{ total }}</b></div>
+    <div class="stat-box"><span>Confirmées</span><b>{{ confirmees }}</b></div>
+    <div class="stat-box"><span>En attente</span><b>{{ en_attente }}</b></div>
+    <div class="stat-box"><span>Annulées</span><b>{{ annulees }}</b></div>
+  </div>
+
+  {# ----- Filtres ----- #}
+  <form class="filtres" method="get" action="{{ path('gestion_reservations') }}">
+    <label for="filtre-recherche" class="visually-hidden">Recherche</label>
+    <input id="filtre-recherche" class="champ-large" type="search" name="q" value="{{ filtre_q }}" placeholder="Rechercher un utilisateur, un film…">
+
+    <label for="filtre-statut" class="visually-hidden">Statut</label>
+    <select id="filtre-statut" name="statut">
+      <option value="">Tous les statuts</option>
+      <option value="payee"      {{ filtre_statut == 'payee' ? 'selected' }}>Confirmée</option>
+      <option value="en_attente" {{ filtre_statut == 'en_attente' ? 'selected' }}>En attente</option>
+      <option value="annulee"    {{ filtre_statut == 'annulee' ? 'selected' }}>Annulée</option>
+    </select>
+
+    <label for="filtre-date" class="visually-hidden">Date</label>
+    <input id="filtre-date" type="date" name="date" value="{{ filtre_date }}">
+
+    <button class="bouton" type="submit">Filtrer</button>
+  </form>
+
+  {# ----- Tableau ----- #}
+  <div class="tableau-box">
+    <table>
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Utilisateur</th>
+          <th>Film</th>
+          <th>Séance</th>
+          <th>Places</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reservations %}
+          <tr>
+            <td class="texte-gris">#{{ r.idReservation }}</td>
+            <td>{{ r.utilisateur.email }}</td>
+            <td>{{ r.seance.film.nomFilm }}</td>
+            <td>
+              {{ r.seance.dateSeance|date('d/m/Y') }}<br>
+              <span class="texte-gris">{{ r.seance.horaireSeance|date('H:i') }} (Salle {{ r.seance.salle }})</span>
+            </td>
+            <td>{{ r.reservationPlaces|length }}</td>
+            <td>
+              {% if r.statut == 'payee' %}
+                <span class="badge badge-vert">Confirmée</span>
+              {% elseif r.statut == 'en_attente' %}
+                <span class="badge badge-jaune">En attente</span>
+              {% else %}
+                <span class="badge badge-rouge">Annulée</span>
+              {% endif %}
+            </td>
+            <td>
+              {# Voir le détail (lien à brancher plus tard) #}
+              <a class="btn-icone" href="#" title="Voir le détail">👁</a>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td class="ligne-vide" colspan="7">Aucune réservation trouvée.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# ----- Bas de page : pagination ----- #}
+  <div class="bas-de-page">
+    <span>Page {{ page }} sur {{ pages }} ({{ total_filtre }} réservations)</span>
+
+    <div class="pagination">
+      {% for i in 1..pages %}
+        <a href="{{ path('gestion_reservations', {page: i, q: filtre_q, statut: filtre_statut, date: filtre_date}) }}"
+           class="{{ i == page ? 'page-actuelle' }}">{{ i }}</a>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,221 @@
+/* -------- Page détail d'un film----- */
+.detail {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 60px;
+    color: var(--blanc);
+}
+
+.detail__back {
+    display: inline-block;
+    margin-bottom: 24px;
+    color: var(--gris);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.detail__back:hover {
+    color: var(--jaune);
+}
+
+/* -------- Informations du film -------- */
+.detail__main {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+}
+
+.detail__poster {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    border-radius: 8px;
+    background: linear-gradient(160deg, #2e2e2e, #0d0d0d);
+    overflow: hidden;
+}
+
+.detail__poster img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.detail__info {
+    min-width: 0;
+}
+
+.detail__title {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.1;
+    color: var(--jaune);
+    margin: 0 0 20px;
+}
+
+.detail__meta {
+    color: var(--gris);
+    margin-bottom: 20px;
+}
+
+.detail__meta p {
+    margin: 8px 0;
+}
+
+.detail__synopsis {
+    max-width: 65ch;
+    line-height: 1.7;
+    margin-bottom: 24px;
+}
+
+.detail__facts {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.detail__facts dt {
+    color: var(--gris);
+    font-size: 0.85rem;
+}
+
+.detail__facts dd {
+    font-weight: 700;
+}
+
+.detail__actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/*---- Boutons -------*/
+.detail__actions a,
+.seances__heures a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    min-height: 44px;
+    background: var(--jaune);
+    border: 2px solid var(--jaune);
+    border-radius: 5px;
+    color: var(--noir);
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+/* ------Hover identique : fond blanc, texte noir -----*/
+.detail__actions a:hover,
+.seances__heures a:hover {
+    background: var(--blanc);
+    border-color: var(--blanc);
+    color: var(--noir);
+    transform: translateY(-2px);
+}
+
+.detail__actions a:focus-visible,
+.seances__heures a:focus-visible,
+.detail__back:focus-visible {
+    outline: 2px solid var(--jaune);
+    outline-offset: 4px;
+}
+
+/* ------ Section des séances ---------- */
+.seances {
+    margin-top: 55px;
+    padding-bottom: 10px;
+}
+
+.seances .section-title {
+    border-left: 6px solid var(--jaune);
+    padding-left: 14px;
+    margin-bottom: 28px;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.2;
+    color: var(--blanc);
+}
+
+.seances__liste {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+
+.seances__jour {
+    padding: 22px;
+    margin: 0;
+    background: var(--carte);
+    border: 1px solid #2c2c2c;
+    border-radius: 8px;
+    transition: border-color 0.2s ease;
+}
+
+.seances__jour:hover {
+    border-color: #555;
+}
+
+.seances__jour h3 {
+    color: var(--jaune);
+    font-size: 1rem;
+    margin: 0 0 14px;
+}
+
+.seances__heures {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+/* ------Aucune séance----- */
+.film-empty {
+    padding: 22px;
+    background: var(--carte);
+    border-radius: 8px;
+    color: var(--gris);
+    text-align: center;
+}
+
+/* ----- Pied de page -------- */
+.footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--gris);
+}
+/* ===== Responsive ===== */
+@media (max-width: 760px) {
+    .detail {
+        padding: 24px 16px 40px;
+    }
+
+    .detail__main {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .detail__poster {
+        max-width: 260px;
+        margin: 0 auto;
+    }
+
+    .detail__title {
+        font-size: 2rem;
+    }
+
+    .seances {
+        margin-top: 40px;
+    }
+
+    .seances__jour {
+        padding: 18px;
+    }
+
+    .seances__heures a {
+        width: 100%;
+    }
+}
