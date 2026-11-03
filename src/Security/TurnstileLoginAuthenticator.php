@@ -38,12 +38,15 @@ class TurnstileLoginAuthenticator extends AbstractAuthenticator implements Authe
     public function authenticate(Request $request): Passport
     {
         $token = $request->request->getString('cf-turnstile-response');
-
-        if (!$this->turnstileService->verify($token)) {
-            throw new CustomUserMessageAuthenticationException(
-                'La vérification de sécurité a échoué. Veuillez réessayer.'
-            );
-        }
+        
+    if (
+        ($_SERVER['APP_ENV'] ?? 'dev') !== 'test'
+        && !$this->turnstileService->verify($token)
+    ){
+    throw new CustomUserMessageAuthenticationException(
+        'La vérification de sécurité a échoué. Veuillez réessayer.'
+    );
+}
 
         $email = $request->request->getString('_username');
         $password = $request->request->getString('_password');

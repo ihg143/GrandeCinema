@@ -1,21 +1,17 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Inscription - GrandCiné</title>
-
+    <link rel="icon" type="image/png" href="{{ asset('image/logo.png') }}">
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
-
     <script type="module"
         src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js">
     </script>
     <script nomodule
         src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js">
     </script>
-
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js"
         async defer></script>
 </head>
@@ -29,10 +25,13 @@
                 <div class="erreur">{{ message }}</div>
             {% endfor %}
 
-            <div class="erreur">
-                {{ form_errors(registrationForm) }}
-            </div>
+            {% if registrationForm.vars.errors|length > 0 %}
+                <div class="erreur">
+                    {{ form_errors(registrationForm) }}
+                </div>
+            {% endif %}
 
+            {# NOM #}
             <div class="inputbox">
                 <ion-icon name="person-outline"></ion-icon>
                 {{ form_widget(registrationForm.nom, {
@@ -43,9 +42,14 @@
                     }
                 }) }}
                 <label for="{{ registrationForm.nom.vars.id }}">Nom</label>
-                <div class="erreur">{{ form_errors(registrationForm.nom) }}</div>
             </div>
+            {% if registrationForm.nom.vars.errors|length > 0 %}
+                <div class="erreur">
+                    {{ form_errors(registrationForm.nom) }}
+                </div>
+            {% endif %}
 
+            {# PRENOM #}
             <div class="inputbox">
                 <ion-icon name="person-outline"></ion-icon>
                 {{ form_widget(registrationForm.prenom, {
@@ -56,9 +60,14 @@
                     }
                 }) }}
                 <label for="{{ registrationForm.prenom.vars.id }}">Prénom</label>
-                <div class="erreur">{{ form_errors(registrationForm.prenom) }}</div>
             </div>
+            {% if registrationForm.prenom.vars.errors|length > 0 %}
+                <div class="erreur">
+                    {{ form_errors(registrationForm.prenom) }}
+                </div>
+            {% endif %}
 
+            {# EMAIL #}
             <div class="inputbox">
                 <ion-icon name="mail-outline"></ion-icon>
                 {{ form_widget(registrationForm.email, {
@@ -69,9 +78,14 @@
                     }
                 }) }}
                 <label for="{{ registrationForm.email.vars.id }}">E-mail</label>
-                <div class="erreur">{{ form_errors(registrationForm.email) }}</div>
             </div>
+            {% if registrationForm.email.vars.errors|length > 0 %}
+                <div class="erreur">
+                    {{ form_errors(registrationForm.email) }}
+                </div>
+            {% endif %}
 
+            {# MOT DE PASSE #}
             <div class="inputbox">
                 <ion-icon name="lock-closed-outline"></ion-icon>
                 {{ form_widget(registrationForm.plainPassword.first, {
@@ -83,11 +97,14 @@
                 <label for="{{ registrationForm.plainPassword.first.vars.id }}">
                     Mot de passe
                 </label>
+            </div>
+            {% if registrationForm.plainPassword.first.vars.errors|length > 0 %}
                 <div class="erreur">
                     {{ form_errors(registrationForm.plainPassword.first) }}
                 </div>
-            </div>
+            {% endif %}
 
+            {# CONFIRMATION #}
             <div class="inputbox">
                 <ion-icon name="lock-closed-outline"></ion-icon>
                 {{ form_widget(registrationForm.plainPassword.second, {
@@ -99,10 +116,12 @@
                 <label for="{{ registrationForm.plainPassword.second.vars.id }}">
                     Confirmer le mot de passe
                 </label>
+            </div>
+            {% if registrationForm.plainPassword.second.vars.errors|length > 0 %}
                 <div class="erreur">
                     {{ form_errors(registrationForm.plainPassword.second) }}
                 </div>
-            </div>
+            {% endif %}
 
             {# CAPTCHA Cloudflare #}
             <div class="captcha">

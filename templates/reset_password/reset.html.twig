@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouveau mot de passe - GrandCiné</title>
+    <link rel="icon" type="image/png" href="{{ asset('image/logo.png') }}">
+    <link rel="stylesheet" href="{{ asset('css/reset-password.css') }}">
+    <script type="module"
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js">
+    </script>
+    <script nomodule
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js">
+    </script>
+</head>
+<body class="page">
+
+    <div class="card card-NewPassword">
+        {{ form_start(resetForm) }}
+
+            <h1 class="title">Nouveau mot de passe</h1>
+
+            <p class="text">
+                Choisis un nouveau mot de passe pour ton compte GrandCiné.
+            </p>
+
+            {# Nouveau mot de passe #}
+            <div class="field">
+                <ion-icon class="field-icon" name="lock-closed-outline"></ion-icon>
+                {{ form_widget(resetForm.plainPassword.first, {
+                    attr: {
+                        id: 'password',
+                        class: 'field-input',
+                        placeholder: ' ',
+                        autocomplete: 'new-password'
+                    }
+                }) }}
+                <label class="field-label" for="password">Nouveau mot de passe</label>
+            </div>
+            {% if resetForm.plainPassword.first.vars.errors|length > 0 %}
+                <div class="error">
+                    {{ form_errors(resetForm.plainPassword.first) }}
+                </div>
+            {% endif %}
+
+            {# Confirmation #}
+            <div class="field">
+                <ion-icon class="field-icon" name="lock-closed-outline"></ion-icon>
+                {{ form_widget(resetForm.plainPassword.second, {
+                    attr: {
+                        id: 'passwordBis',
+                        class: 'field-input',
+                        placeholder: ' ',
+                        autocomplete: 'new-password'
+                    }
+                }) }}
+                <label class="field-label" for="passwordBis">Confirmer le mot de passe</label>
+            </div>
+            {% if resetForm.plainPassword.second.vars.errors|length > 0 %}
+                <div class="error">
+                    {{ form_errors(resetForm.plainPassword.second) }}
+                </div>
+            {% endif %}
+
+            <button class="button" type="submit">
+                Réinitialiser mon mot de passe
+            </button>
+
+        {{ form_end(resetForm) }}
+    </div>
+
+</body>
+</html>

@@ -20,6 +20,8 @@ class FilmController extends AbstractController
         if ($q !== '') {
             $films = $filmRepository->createQueryBuilder('f')
                 ->where('f.nomFilm LIKE :q')
+                ->orWhere('f.genre LIKE :q')
+                 ->orWhere('f.description LIKE :q')
                 ->setParameter('q', '%' . $q . '%')
                 ->orderBy('f.nomFilm', 'ASC')
                 ->getQuery()

@@ -109,10 +109,6 @@ h1 {
     margin: 3px 0;
 }
 
-form > .erreur {
-    margin: 10px 0;
-}
-
 .message-success {
     background: #e8f5e9;
     color: #155724;
@@ -170,6 +166,9 @@ button {
 button:hover {
     background-color: rgba(255, 255, 255, 0.8);
 }
+.captcha {
+    margin: 20px 0;
+}
 
 .register,
 .login {
@@ -197,8 +196,20 @@ button:hover {
     text-decoration: underline;
 }
 
-.g-recaptcha {
-    margin: 20px 0;
+.inputbox {
+    position: relative;
+    width: 100%;
+    margin: 25px 0 10px;
+    border-bottom: 2px solid #fff;
+}
+
+.erreur {
+    display: block;
+    color: #ffe0e0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.5;
+    margin: 0 0 15px;
 }
 /* ===== Responsive ===== */
 @media (max-width: 576px) {

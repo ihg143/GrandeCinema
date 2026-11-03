@@ -54,21 +54,14 @@ final class AdminController extends AbstractController
             if ($jourCle === $aujourdhui) {
                 $seancesAujourdhui++;
             }
-
-            // Construire la date et l'heure complètes de la séance.
             $debutSeance = new \DateTimeImmutable(
                 $jourCle . ' ' . $horaireSeance->format('H:i:s')
             );
 
-            // Ignorer les séances futures et celles en cours.
-            // On considère ici qu'une séance est terminée
-            // lorsque sa durée réelle est passée.
             $film = $seance->getFilm();
             $duree = $film?->getDuree() ?? 0;
 
             if ($duree <= 0) {
-                // Sans durée connue, on ne peut pas déterminer
-                // précisément si la séance est terminée.
                 continue;
             }
 

@@ -60,13 +60,14 @@ class RegistrationController extends AbstractController
 
             // Préparer l'e-mail de confirmation
             $email = (new TemplatedEmail())
-                ->from('confirmation@grandcine.test')
+                ->from('contact@xn--grandcin-i1a.fr')
                 ->to($user->getEmail())
                 ->subject('Confirmez votre adresse e-mail - GrandCiné')
                 ->htmlTemplate('registration/confirmation_email.html.twig')
                 ->context([
                     'prenom' => $user->getPrenom(),
                 ]);
+                
 
             try {
                 $emailVerifier->sendEmailConfirmation(
@@ -96,3 +97,7 @@ class RegistrationController extends AbstractController
         ]);
     }
 }
+
+
+
+

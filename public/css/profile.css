@@ -293,6 +293,59 @@ body {
     outline: 2px solid #f87171;
     outline-offset: 3px;
 }
+/* ===== Suppression du compte ===== */
+
+#supprimer-compte {
+    border: 1px solid #5a2525;
+}
+
+#supprimer-compte .block-title {
+    border-left-color: #dc2626;
+}
+
+#supprimer-compte .profile-info {
+    color: var(--texte-gris);
+    font-size: 15px;
+    line-height: 1.7;
+    margin: 0 0 24px;
+    max-width: 700px;
+}
+
+/* Formulaire de suppression */
+#supprimer-compte form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#supprimer-compte .form-group {
+    max-width: 450px;
+}
+
+/* Bouton rouge */
+.btn-delete {
+    display: inline-block;
+    align-self: flex-start;
+    padding: 12px 24px;
+    background: #dc2626;
+    color: #ffffff;
+    border: 2px solid #dc2626;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, opacity 0.2s;
+}
+
+.btn-delete:hover {
+    background: #b91c1c;
+    border-color: #b91c1c;
+}
+
+.btn-delete:focus-visible {
+    outline: 2px solid #f87171;
+    outline-offset: 3px;
+}
 /* ===== Responsive ===== */
 @media (max-width: 800px) {
     .profile {

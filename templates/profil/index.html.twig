@@ -36,6 +36,7 @@
             <a href="#infos" class="profile-menu-link active">Mes informations</a>
             <a href="#reservations" class="profile-menu-link">Mes réservations</a>
             <a href="#password" class="profile-menu-link">Mot de passe</a>
+            <a href="#supprimer-compte" class="profile-menu-link">Supprimer mon compte</a>
         </nav>
 
         <div class="profile-content">
@@ -159,7 +160,41 @@
                     <button type="submit" name="update_password" class="btn btn-yellow">Changer le mot de passe</button>
                 </form>
             </section>
+           
+{# ===== Suppression du compte ===== #}
+<section id="supprimer-compte" class="profile-block">
+    <h2 class="block-title">Supprimer mon compte</h2>
 
+    <p class="profile-info">
+        Attention : la suppression de votre compte est définitive.
+        Vous ne pourrez plus accéder à votre espace personnel.
+    </p>
+
+    <form method="post"
+          action="{{ path('app_supprimer_compte') }}"
+          data-turbo="false"
+          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer définitivement votre compte ?');">
+
+        <input type="hidden"
+               name="_token"
+               value="{{ csrf_token('delete_account') }}">
+
+        <div class="form-group">
+            <label for="delete_password">Mot de passe actuel</label>
+            <input
+                type="password"
+                id="delete_password"
+                name="current_password"
+                placeholder="Saisissez votre mot de passe actuel"
+                required
+            >
+        </div>
+
+        <button type="submit" class="btn-delete">
+            Supprimer mon compte
+        </button>
+    </form>
+</section>
         </div>
     </div>
 </main>

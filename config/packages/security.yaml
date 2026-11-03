@@ -23,10 +23,14 @@ security:
                 path: app_logout
                 target: app_accueil
                 enable_csrf: true
+            login_throttling:
+                max_attempts: 2
+                interval: '10 seconds'
 
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/profil, roles: ROLE_USER }
+        - { path: ^/profil/confirmer-email$, roles: PUBLIC_ACCESS }
+        - { path: ^/profil, roles: ROLE_USER }  
         - { path: ^/reservation, roles: ROLE_USER }
 
 when@test:

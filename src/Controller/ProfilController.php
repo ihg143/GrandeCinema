@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 final class ProfilController extends AbstractController
 {
@@ -39,19 +41,13 @@ final class ProfilController extends AbstractController
             $nouvelEmail = trim((string) $request->request->get('email'));
 
             if ($nom === '' || $prenom === '') {
-                $this->addFlash(
-                    'error',
-                    'Le nom et le prénom sont obligatoires.'
-                );
+                $this->addFlash('error', 'Le nom et le prénom sont obligatoires.');
 
                 return $this->redirectToRoute('app_profil');
             }
 
             if (!filter_var($nouvelEmail, FILTER_VALIDATE_EMAIL)) {
-                $this->addFlash(
-                    'error',
-                    'Veuillez saisir une adresse e-mail valide.'
-                );
+                $this->addFlash('error', 'Veuillez saisir une adresse e-mail valide.');
 
                 return $this->redirectToRoute('app_profil');
             }
@@ -66,10 +62,7 @@ final class ProfilController extends AbstractController
                 ]);
 
                 if ($existingUser !== null && $existingUser->getIdUser() !== $user->getIdUser()) {
-                    $this->addFlash(
-                        'error',
-                        'Cette adresse e-mail est déjà utilisée.'
-                    );
+                    $this->addFlash('error', 'Cette adresse e-mail est déjà utilisée.');
 
                     return $this->redirectToRoute('app_profil');
                 }
@@ -108,10 +101,7 @@ final class ProfilController extends AbstractController
             } else {
                 $entityManager->flush();
 
-                $this->addFlash(
-                    'success',
-                    'Votre profil a été mis à jour.'
-                );
+                $this->addFlash('success', 'Votre profil a été mis à jour.');
             }
 
             return $this->redirectToRoute('app_profil');
@@ -124,43 +114,28 @@ final class ProfilController extends AbstractController
             $confirmPassword = (string) $request->request->get('confirm_password');
 
             if (!$passwordHasher->isPasswordValid($user, $currentPassword)) {
-                $this->addFlash(
-                    'error',
-                    'Le mot de passe actuel est incorrect.'
-                );
+                $this->addFlash('error', 'Le mot de passe actuel est incorrect.');
             } elseif ($newPassword === '') {
-                $this->addFlash(
-                    'error',
-                    'Le nouveau mot de passe ne peut pas être vide.'
-                );
+                $this->addFlash('error', 'Le nouveau mot de passe ne peut pas être vide.');
             } elseif ($newPassword !== $confirmPassword) {
-                $this->addFlash(
-                    'error',
-                    'Les nouveaux mots de passe ne correspondent pas.'
-                );
+                $this->addFlash('error', 'Les nouveaux mots de passe ne correspondent pas.');
             } else {
-                $hashedPassword = $passwordHasher->hashPassword(
-                    $user,
-                    $newPassword
-                );
+                $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
 
                 $user->setMdp($hashedPassword);
 
                 $entityManager->flush();
 
-                $this->addFlash(
-                    'success',
-                    'Mot de passe mis à jour avec succès !'
-                );
+                $this->addFlash('success', 'Mot de passe mis à jour avec succès !');
             }
 
             return $this->redirectToRoute('app_profil');
         }
 
         // Chargement des réservations de l'utilisateur et de leurs places
-        $reservations = $reservationRepository->findBy(
-            ['utilisateur' => $user]
-        );
+        $reservations = $reservationRepository->findBy([
+            'utilisateur' => $user,
+        ]);
 
         $reservationsDetails = [];
 
@@ -176,5 +151,71 @@ final class ProfilController extends AbstractController
         return $this->render('profil/index.html.twig', [
             'reservationsDetails' => $reservationsDetails,
         ]);
+    }
+
+    // Suppression du compte
+    #[Route('/profil/supprimer-compte', name: 'app_supprimer_compte', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function supprimerCompte(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $passwordHasher,
+        TokenStorageInterface $tokenStorage
+    ): Response {
+        /** @var Utilisateur $user */
+        $user = $this->getUser();
+
+        // Vérification du jeton CSRF
+        if (!$this->isCsrfTokenValid(
+            'delete_account',
+            $request->request->get('_token')
+        )) {
+            $this->addFlash('error', 'La demande de suppression est invalide.');
+
+            return $this->redirectToRoute('app_profil');
+        }
+
+        // Vérification du mot de passe actuel
+        $currentPassword = (string) $request->request->get('current_password');
+
+        if (!$passwordHasher->isPasswordValid($user, $currentPassword)) {
+            $this->addFlash('error', 'Le mot de passe actuel est incorrect.');
+
+            return $this->redirectToRoute('app_profil');
+        }
+
+        // Anonymisation des informations personnelles
+        $userId = $user->getIdUser();
+
+        $user->setNom('Compte supprimé');
+        $user->setPrenom('Utilisateur');
+        $user->setEmail('compte-supprime-' . $userId . '@example.invalid');
+        $user->setEmailEnAttente(null);
+
+        // Remplacement du mot de passe par une valeur aléatoire
+        $user->setMdp(
+            $passwordHasher->hashPassword(
+                $user,
+                bin2hex(random_bytes(32))
+            )
+        );
+
+        $user->setIsVerified(false);
+
+        $entityManager->flush();
+
+        // Déconnexion de l'utilisateur
+        $tokenStorage->setToken(null);
+        /** @var Session $session */
+        $session = $request->getSession(); 
+        $request->getSession()->invalidate();
+        // Message de confirmation
+    $session->getFlashBag()->add(
+    'account_deleted',
+    'Votre compte a été supprimé avec succès.'
+);
+
+
+        return $this->redirectToRoute('app_accueil');
     }
 }

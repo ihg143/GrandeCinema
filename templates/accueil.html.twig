@@ -1,6 +1,13 @@
 {% include 'partials/header.html.twig' %}
 <main>
-
+ {% for message in app.flashes('account_deleted') %}
+    <div class="account-notification">
+        <div class="notification-content">
+            <span>{{ message }}</span>
+        </div>
+        <div class="notification-progress"></div>
+    </div>
+{% endfor %}
     {# ---------- Bannière ---------- #}
     <section class="banniere">
         <div class="banniere-texte">
@@ -194,7 +201,6 @@
         </div>
     </div>
 </section>
-
 </main>
 
 {# ---------- Footer ---------- #}
@@ -209,6 +215,18 @@
     <p>Ouvert tous les jours de 13h à 23h</p>
 
 </footer>
+    <script>
+    document.querySelectorAll('.account-notification').forEach(notification => {
+        setTimeout(() => {
+            notification.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(30px)';
 
+            setTimeout(() => {
+                notification.remove();
+            }, 400);
+        }, 10000);
+    });
+</script>
 </body>
 </html>

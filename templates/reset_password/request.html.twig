@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mot de passe oublié - GrandCiné</title>
+    <link rel="icon" type="image/png" href="{{ asset('image/logo.png') }}">
+    <link rel="stylesheet" href="{{ asset('css/reset-password.css') }}">
+    <script type="module"
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js">
+    </script>
+    <script nomodule
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js">
+    </script>
+</head>
+<body class="page">
+
+    <div class="card">
+        {{ form_start(requestForm) }}
+
+            <h1 class="title">Mot de passe oublié ?</h1>
+
+            <p class="text">
+                Saisis ton adresse e-mail.<br>
+                 Nous t'enverrons un lien pour réinitialiser ton mot de passe.
+            </p>
+
+            {% for flash_error in app.flashes('reset_password_error') %}
+                <div class="error">{{ flash_error }}</div>
+            {% endfor %}
+
+            <div class="field">
+                <ion-icon class="field-icon" name="mail-outline"></ion-icon>
+                {{ form_widget(requestForm.email, {
+                    attr: {
+                        id: 'email',
+                        class: 'field-input',
+                        placeholder: ' ',
+                        autocomplete: 'email'
+                    }
+                }) }}
+                <label class="field-label" for="email">E-mail</label>
+            </div>
+
+            {% if requestForm.email.vars.errors|length > 0 %}
+                <div class="error">
+                    {{ form_errors(requestForm.email) }}
+                </div>
+            {% endif %}
+
+            <button class="button" type="submit">Envoyer le lien</button>
+
+            <a class="link" href="{{ path('app_login') }}">
+                Retour à la connexion
+            </a>
+
+        {{ form_end(requestForm) }}
+    </div>
+
+</body>
+</html>
