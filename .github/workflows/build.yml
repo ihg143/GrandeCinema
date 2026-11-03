@@ -51,6 +51,8 @@ jobs:
           APP_SECRET=github-actions-test-secret
           DEFAULT_URI=http://localhost
           DATABASE_URL="mysql://root:root@127.0.0.1:3306/grandecinema?serverVersion=10.11.0-MariaDB"
+          TURNSTILE_SECRET_KEY=test-secret-key
+          TURNSTILE_SITE_KEY=test-site-key
           EOF
 
       - name: Install dependencies
