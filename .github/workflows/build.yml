@@ -53,6 +53,7 @@ jobs:
           TURNSTILE_SECRET_KEY=test-secret-key
           TURNSTILE_SITE_KEY=test-site-key
           MAILER_DSN=null://null
+          MESSENGER_TRANSPORT_DSN=sync://
           EOF
 
       - name: Install dependencies
