@@ -35,6 +35,7 @@ jobs:
           @"
           APP_ENV=test
           APP_SECRET=github-actions-test-secret
+          DEFAULT_URI=http://localhost
           "@ | Set-Content .env
 
       - name: Install dependencies
