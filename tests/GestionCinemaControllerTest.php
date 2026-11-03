@@ -7,11 +7,12 @@ use App\Entity\Place;
 use App\Entity\Seance;
 use App\Entity\Utilisateur;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class GestionCinemaControllerTest extends WebTestCase
 {
-    private function connecterAdmin($client): void
+    private function connecterAdmin(KernelBrowser $client): void
     {
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
@@ -56,35 +57,53 @@ class GestionCinemaControllerTest extends WebTestCase
         $em->flush();
     }
 
-    private function tokenAjout($client): string
+    private function tokenAjout(KernelBrowser $client): string
     {
-        $crawler = $client->request('GET', '/admin/gestion/seances');
+        $crawler = $client->request(
+            'GET',
+            '/admin/gestion/seances'
+        );
 
-        return $crawler
-            ->filter('form.form-ajout-seance input[name="_token"]')
-            ->attr('value');
+        self::assertResponseIsSuccessful();
+
+        $champToken = $crawler->filter(
+            'form.form-ajout-seance input[name="_token"]'
+        );
+
+        self::assertCount(
+            1,
+            $champToken,
+            'Le jeton CSRF du formulaire d’ajout est introuvable.'
+        );
+
+        return $champToken->attr('value');
     }
 
-private function tokenSuppression($client, int $id, string $nomFilm): string
-{
-    $crawler = $client->request('GET', '/admin/gestion/seances', [
-        'q' => $nomFilm,
-    ]);
+    private function tokenSuppression(
+        KernelBrowser $client,
+        int $id,
+        string $nomFilm
+    ): string {
+        $crawler = $client->request(
+            'GET',
+            '/admin/gestion/seances',
+            ['q' => $nomFilm]
+        );
 
-    self::assertResponseIsSuccessful();
+        self::assertResponseIsSuccessful();
 
-    $champToken = $crawler->filterXPath(
-        '//form[contains(@action, "/' . $id . '/supprimer")]//input[@name="_token"]'
-    );
+        $champToken = $crawler->filterXPath(
+            '//form[contains(@action, "/' . $id . '/supprimer")]//input[@name="_token"]'
+        );
 
-    self::assertCount(
-        1,
-        $champToken,
-        'Le formulaire de suppression de la séance est introuvable.'
-    );
+        self::assertCount(
+            1,
+            $champToken,
+            'Le formulaire de suppression de la séance est introuvable.'
+        );
 
-    return $champToken->attr('value');
-}
+        return $champToken->attr('value');
+    }
 
     public function testAjoutAvecJetonInvalide(): void
     {
@@ -166,10 +185,11 @@ private function tokenSuppression($client, int $id, string $nomFilm): string
             'salle' => 1,
         ]);
 
-        self::assertNotNull($seance);
+        self::assertNotNull(
+            $seance,
+            'La séance aurait dû être créée.'
+        );
     }
-
-    // SUPPRIMER UNE SÉANCE
 
     public function testSuppressionAvecJetonInvalide(): void
     {
@@ -199,7 +219,8 @@ private function tokenSuppression($client, int $id, string $nomFilm): string
         self::assertResponseRedirects('/admin/gestion/seances');
 
         self::assertNotNull(
-            $em->getRepository(Seance::class)->find($id)
+            $em->getRepository(Seance::class)->find($id),
+            'La séance ne doit pas être supprimée avec un jeton invalide.'
         );
     }
 
@@ -222,7 +243,11 @@ private function tokenSuppression($client, int $id, string $nomFilm): string
 
         $id = $seance->getIdSeance();
 
-        $token = $this->tokenSuppression($client,$id,$film->getNomFilm());
+        $token = $this->tokenSuppression(
+            $client,
+            $id,
+            $film->getNomFilm()
+        );
 
         $client->request(
             'POST',
@@ -233,7 +258,8 @@ private function tokenSuppression($client, int $id, string $nomFilm): string
         self::assertResponseRedirects('/admin/gestion/seances');
 
         self::assertNull(
-            $em->getRepository(Seance::class)->find($id)
+            $em->getRepository(Seance::class)->find($id),
+            'La séance aurait dû être supprimée.'
         );
     }
 }
