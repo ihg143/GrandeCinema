@@ -31,7 +31,11 @@ jobs:
           tools: composer:v2
 
       - name: Create environment file
-        run: Copy-Item .env.dev .env
+        run: |
+          @"
+          APP_ENV=test
+          APP_SECRET=github-actions-test-secret
+          "@ | Set-Content .env
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
