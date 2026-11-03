@@ -712,6 +712,19 @@ a {
     /* Header et menu burger */
     .header-container {
         flex-wrap: wrap;
+         position: relative;
+           justify-content: center;
+          align-content: flex-start;
+    }
+        #menu-user {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .user-dropdown {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
     }
 
     .burger {
@@ -757,7 +770,26 @@ a {
         box-sizing: border-box;
         margin: 10px 0;
     }
+    
+    /* Menu profil sur mobile */
+    .user-menu {
+        position: relative;
+    }
 
+    .user-dropdown {
+        left: 0;
+        right: auto;
+        top: calc(100% + 10px);
+        width: 260px;
+        max-width: calc(100vw - 40px);
+        min-width: 0;
+        z-index: 2000;
+    }
+
+    .user-dropdown a,
+    .user-dropdown .user-email {
+        white-space: normal;
+    }
 
     .banniere {
         min-height: 0;
