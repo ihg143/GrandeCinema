@@ -30,6 +30,9 @@ jobs:
           coverage: xdebug
           tools: composer:v2
 
+      - name: Create environment file
+        run: Copy-Item .env.dev .env
+
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
