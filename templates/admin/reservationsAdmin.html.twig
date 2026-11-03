@@ -1,3 +1,4 @@
+
 {# Variables envoyées par GestionCinemaController::reservations() :
    reservations, page, pages, total_filtre, total, confirmees, en_attente, annulees,
    filtre_q, filtre_statut, filtre_date #}
@@ -29,14 +30,20 @@
 
   {# ----- Filtres ----- #}
   <form class="filtres" method="get" action="{{ path('gestion_reservations') }}">
-    <input class="champ-large" type="search" name="q" value="{{ filtre_q }}" placeholder="Rechercher un utilisateur, un film…">
-    <select name="statut">
+    <label for="filtre-recherche" class="visually-hidden">Recherche</label>
+    <input id="filtre-recherche" class="champ-large" type="search" name="q" value="{{ filtre_q }}" placeholder="Rechercher un utilisateur, un film…">
+
+    <label for="filtre-statut" class="visually-hidden">Statut</label>
+    <select id="filtre-statut" name="statut">
       <option value="">Tous les statuts</option>
       <option value="payee"      {{ filtre_statut == 'payee' ? 'selected' }}>Confirmée</option>
       <option value="en_attente" {{ filtre_statut == 'en_attente' ? 'selected' }}>En attente</option>
       <option value="annulee"    {{ filtre_statut == 'annulee' ? 'selected' }}>Annulée</option>
     </select>
-    <input type="date" name="date" value="{{ filtre_date }}">
+
+    <label for="filtre-date" class="visually-hidden">Date</label>
+    <input id="filtre-date" type="date" name="date" value="{{ filtre_date }}">
+
     <button class="bouton" type="submit">Filtrer</button>
   </form>
 
