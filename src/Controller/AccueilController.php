@@ -39,13 +39,12 @@ class AccueilController extends AbstractController
 
         } catch (DatabaseException $e) {
 
-            // Enregistrer l'erreur dans les logs
             $logger->error(
                 'Erreur lors de l’accès à la base de données.',
                 ['exception' => $e]
             );
 
-            // Afficher une page d'erreur propre
+            
             return $this->render(
                 'bundles/TwigBundle/Exception/error503.html.twig',
                 [],
