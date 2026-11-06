@@ -296,7 +296,6 @@ class GestionCinemaControllerTest extends WebTestCase
 
         self::assertResponseRedirects('/admin/gestion/seances');
 
-        // Récupération de la séance depuis la base de données
         $seanceModifiee = $em->getRepository(Seance::class)->find($id);
 
         self::assertNotNull(
@@ -376,6 +375,35 @@ class GestionCinemaControllerTest extends WebTestCase
         self::assertResponseRedirects(
             '/admin/gestion/seances?edit=' . $id . '#formulaire-seance'
         );
+    }
+
+    // TESTS DES SÉANCES INTROUVABLES
+
+    public function testModificationSeanceIntrouvable(): void
+    {
+        $client = static::createClient();
+        $this->connecterAdmin($client);
+
+        $client->request('POST', '/admin/gestion/seances', [
+            'idSeance' => 999999,
+            '_token' => 'faux_token',
+        ]);
+
+        self::assertResponseRedirects('/admin/gestion/seances');
+    }
+
+    public function testAffichageModificationSeanceIntrouvable(): void
+    {
+        $client = static::createClient();
+        $this->connecterAdmin($client);
+
+        $client->request(
+            'GET',
+            '/admin/gestion/seances',
+            ['edit' => 999999]
+        );
+
+        self::assertResponseRedirects('/admin/gestion/seances');
     }
 
     // SUPPRESSION
