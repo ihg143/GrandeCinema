@@ -79,6 +79,31 @@ class GestionCinemaControllerTest extends WebTestCase
         return $champToken->attr('value');
     }
 
+    private function tokenModification(
+        KernelBrowser $client,
+        int $id
+    ): string {
+        $crawler = $client->request(
+            'GET',
+            '/admin/gestion/seances',
+            ['edit' => $id]
+        );
+
+        self::assertResponseIsSuccessful();
+
+        $champToken = $crawler->filter(
+            'form.form-ajout-seance input[name="_token"]'
+        );
+
+        self::assertCount(
+            1,
+            $champToken,
+            'Le jeton CSRF du formulaire de modification est introuvable.'
+        );
+
+        return $champToken->attr('value');
+    }
+
     private function tokenSuppression(
         KernelBrowser $client,
         int $id,
@@ -104,6 +129,8 @@ class GestionCinemaControllerTest extends WebTestCase
 
         return $champToken->attr('value');
     }
+
+    // AJOUT
 
     public function testAjoutAvecJetonInvalide(): void
     {
@@ -192,6 +219,166 @@ class GestionCinemaControllerTest extends WebTestCase
             'La séance aurait dû être créée.'
         );
     }
+
+    // MODIFICATION
+
+    public function testAffichageFormulaireModification(): void
+    {
+        $client = static::createClient();
+        $this->connecterAdmin($client);
+
+        $film = $this->creerFilm();
+
+        $seance = new Seance();
+        $seance->setFilm($film);
+        $seance->setSalle(1);
+        $seance->setDateSeance(new \DateTime('2030-01-15'));
+        $seance->setHoraireSeance(new \DateTime('18:00'));
+
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $em->persist($seance);
+        $em->flush();
+
+        $id = $seance->getIdSeance();
+
+        $crawler = $client->request(
+            'GET',
+            '/admin/gestion/seances',
+            ['edit' => $id]
+        );
+
+        self::assertResponseIsSuccessful();
+
+        self::assertSelectorExists('form.form-ajout-seance');
+
+        self::assertSelectorTextContains(
+            'form.form-ajout-seance button[type="submit"]',
+            'Enregistrer les modifications'
+        );
+
+        self::assertSame(
+            (string) $id,
+            $crawler->filter(
+                'form.form-ajout-seance input[name="idSeance"]'
+            )->attr('value')
+        );
+    }
+
+    public function testModificationSeanceAvecSucces(): void
+    {
+        $client = static::createClient();
+        $this->connecterAdmin($client);
+
+        $film = $this->creerFilm();
+        $this->creerPlace(1);
+
+        $seance = new Seance();
+        $seance->setFilm($film);
+        $seance->setSalle(1);
+        $seance->setDateSeance(new \DateTime('2030-01-15'));
+        $seance->setHoraireSeance(new \DateTime('18:00'));
+
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $em->persist($seance);
+        $em->flush();
+
+        $id = $seance->getIdSeance();
+        $token = $this->tokenModification($client, $id);
+
+        $client->request('POST', '/admin/gestion/seances', [
+            'idSeance' => $id,
+            '_token' => $token,
+            'film' => $film->getIdFilm(),
+            'salle' => '1',
+            'dateSeance' => '2030-02-20',
+            'horaireSeance' => '20:00',
+        ]);
+
+        self::assertResponseRedirects('/admin/gestion/seances');
+
+        // Récupération de la séance depuis la base de données
+        $seanceModifiee = $em->getRepository(Seance::class)->find($id);
+
+        self::assertNotNull(
+            $seanceModifiee,
+            'La séance modifiée doit toujours exister.'
+        );
+
+        self::assertSame(
+            '2030-02-20',
+            $seanceModifiee->getDateSeance()->format('Y-m-d')
+        );
+
+        self::assertSame(
+            '20:00',
+            $seanceModifiee->getHoraireSeance()->format('H:i')
+        );
+    }
+
+    public function testModificationAvecJetonInvalide(): void
+    {
+        $client = static::createClient();
+        $this->connecterAdmin($client);
+
+        $film = $this->creerFilm();
+
+        $seance = new Seance();
+        $seance->setFilm($film);
+        $seance->setSalle(1);
+        $seance->setDateSeance(new \DateTime('2030-01-15'));
+        $seance->setHoraireSeance(new \DateTime('18:00'));
+
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $em->persist($seance);
+        $em->flush();
+
+        $id = $seance->getIdSeance();
+
+        $client->request('POST', '/admin/gestion/seances', [
+            'idSeance' => $id,
+            '_token' => 'faux_token',
+        ]);
+
+        self::assertResponseRedirects(
+            '/admin/gestion/seances?edit=' . $id . '#formulaire-seance'
+        );
+    }
+
+    public function testModificationAvecDonneesInvalides(): void
+    {
+        $client = static::createClient();
+        $this->connecterAdmin($client);
+
+        $film = $this->creerFilm();
+
+        $seance = new Seance();
+        $seance->setFilm($film);
+        $seance->setSalle(1);
+        $seance->setDateSeance(new \DateTime('2030-01-15'));
+        $seance->setHoraireSeance(new \DateTime('18:00'));
+
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $em->persist($seance);
+        $em->flush();
+
+        $id = $seance->getIdSeance();
+        $token = $this->tokenModification($client, $id);
+
+        $client->request('POST', '/admin/gestion/seances', [
+            'idSeance' => $id,
+            '_token' => $token,
+            'film' => 999999,
+            'salle' => '1',
+            'dateSeance' => 'date_invalide',
+            'horaireSeance' => 'heure_invalide',
+        ]);
+
+        self::assertResponseRedirects(
+            '/admin/gestion/seances?edit=' . $id . '#formulaire-seance'
+        );
+    }
+
+    // SUPPRESSION
 
     public function testSuppressionAvecJetonInvalide(): void
     {
