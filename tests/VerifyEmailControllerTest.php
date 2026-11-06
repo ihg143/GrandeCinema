@@ -78,9 +78,9 @@ class VerifyEmailControllerTest extends WebTestCase
         $user = $this->creerUtilisateur();
         $userId = $user->getIdUser();
 
-        $exception = $this->createMock(
-            VerifyEmailExceptionInterface::class
-        );
+       $exception = $this->createStub(
+        VerifyEmailExceptionInterface::class
+       );
 
         $emailVerifier = $this->createMock(EmailVerifier::class);
 

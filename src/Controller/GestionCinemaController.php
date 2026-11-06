@@ -25,19 +25,50 @@ class GestionCinemaController extends AbstractController
         Request $request,
         EntityManagerInterface $em
     ): Response {
-        // AJOUT D'UNE SÉANCE
+
+        // AJOUTER OU MODIFIER UNE SÉANCE
         if ($request->isMethod('POST')) {
+            $idSeance = $request->request->getInt('idSeance', 0);
+
+            // Déterminer si on ajoute ou modifie une séance
+            $seance = null;
+
+            if ($idSeance > 0) {
+                $seance = $em->getRepository(Seance::class)->find($idSeance);
+
+                if (!$seance) {
+                    $this->addFlash('erreur', 'La séance demandée est introuvable.');
+
+                    return $this->redirectToRoute('gestion_seances');
+                }
+
+                $identifiantToken = 'modifier' . $idSeance;
+            } else {
+                $identifiantToken = 'ajouter_seance';
+            }
+
+            // Vérification CSRF
             $token = (string) $request->request->get('_token', '');
 
-            if (!$this->isCsrfTokenValid('ajouter_seance', $token)) {
+            if (!$this->isCsrfTokenValid($identifiantToken, $token)) {
                 $this->addFlash(
                     'erreur',
                     'Le formulaire a expiré ou le jeton est invalide. Rechargez la page puis réessayez.'
                 );
 
-                return $this->redirectToRoute('gestion_seances');
+                if ($idSeance > 0) {
+                    return $this->redirectToRoute('gestion_seances', [
+                        'edit' => $idSeance,
+                        '_fragment' => 'formulaire-seance',
+                    ]);
+                }
+
+                return $this->redirectToRoute('gestion_seances', [
+                    '_fragment' => 'formulaire-seance',
+                ]);
             }
 
+            // Récupération des données
             $filmId = $request->request->getInt('film');
             $salleTexte = trim((string) $request->request->get('salle', ''));
             $dateTexte = trim((string) $request->request->get('dateSeance', ''));
@@ -54,6 +85,7 @@ class GestionCinemaController extends AbstractController
             $horaireValide = $horaire !== false
                 && $horaire->format('H:i') === $horaireTexte;
 
+            // Vérification des données
             if (
                 !$film
                 || !ctype_digit($salleTexte)
@@ -66,12 +98,19 @@ class GestionCinemaController extends AbstractController
                     'Veuillez sélectionner un film, une salle, une date et un horaire valides.'
                 );
 
+                if ($idSeance > 0) {
+                    return $this->redirectToRoute('gestion_seances', [
+                        'edit' => $idSeance,
+                        '_fragment' => 'formulaire-seance',
+                    ]);
+                }
+
                 return $this->redirectToRoute('gestion_seances', [
-                    '_fragment' => 'ajouter-seance',
+                    '_fragment' => 'formulaire-seance',
                 ]);
             }
 
-            // Vérifier que la salle existe dans les places configurées.
+            // Vérifier que la salle existe
             $salleExiste = (int) $em->getConnection()->fetchOne(
                 'SELECT COUNT(*) FROM Places WHERE salle = ?',
                 [(int) $salleTexte]
@@ -83,21 +122,70 @@ class GestionCinemaController extends AbstractController
                     'Cette salle ne possède aucune place configurée.'
                 );
 
+                if ($idSeance > 0) {
+                    return $this->redirectToRoute('gestion_seances', [
+                        'edit' => $idSeance,
+                        '_fragment' => 'formulaire-seance',
+                    ]);
+                }
+
                 return $this->redirectToRoute('gestion_seances', [
-                    '_fragment' => 'ajouter-seance',
+                    '_fragment' => 'formulaire-seance',
                 ]);
             }
 
-            $seance = new Seance();
-            $seance->setFilm($film);
-            $seance->setSalle((int) $salleTexte);
-            $seance->setDateSeance($date);
-            $seance->setHoraireSeance($horaire);
+            // MODIFICATION
+            if ($seance) {
 
-            $em->persist($seance);
-            $em->flush();
+                // Empêcher de changer le film ou la salle
+                // si la séance possède déjà des réservations.
+                if (
+                    $seance->getReservations()->count() > 0
+                    && (
+                        $seance->getFilm()->getIdFilm() !== $film->getIdFilm()
+                        || $seance->getSalle() !== (int) $salleTexte
+                    )
+                ) {
+                    $this->addFlash(
+                        'erreur',
+                        'Impossible de changer le film ou la salle : cette séance possède déjà des réservations.'
+                    );
 
-            $this->addFlash('succes', 'La séance a été ajoutée avec succès.');
+                    return $this->redirectToRoute('gestion_seances', [
+                        'edit' => $idSeance,
+                        '_fragment' => 'formulaire-seance',
+                    ]);
+                }
+
+                $seance->setFilm($film);
+                $seance->setSalle((int) $salleTexte);
+                $seance->setDateSeance($date);
+                $seance->setHoraireSeance($horaire);
+
+                $em->flush();
+
+                $this->addFlash(
+                    'succes',
+                    'La séance a été modifiée avec succès.'
+                );
+
+            } else {
+
+                // AJOUT
+                $seance = new Seance();
+                $seance->setFilm($film);
+                $seance->setSalle((int) $salleTexte);
+                $seance->setDateSeance($date);
+                $seance->setHoraireSeance($horaire);
+
+                $em->persist($seance);
+                $em->flush();
+
+                $this->addFlash(
+                    'succes',
+                    'La séance a été ajoutée avec succès.'
+                );
+            }
 
             return $this->redirectToRoute('gestion_seances');
         }
@@ -107,6 +195,20 @@ class GestionCinemaController extends AbstractController
         $salle = trim((string) $request->query->get('salle', ''));
         $dateTexte = trim((string) $request->query->get('date', ''));
         $page = max(1, $request->query->getInt('page', 1));
+
+        // CHARGER LA SÉANCE À MODIFIER
+        $seanceEdit = null;
+        $idEdit = $request->query->getInt('edit', 0);
+
+        if ($idEdit > 0) {
+            $seanceEdit = $em->getRepository(Seance::class)->find($idEdit);
+
+            if (!$seanceEdit) {
+                $this->addFlash('erreur', 'La séance demandée est introuvable.');
+
+                return $this->redirectToRoute('gestion_seances');
+            }
+        }
 
         // REQUÊTE DES SÉANCES
         $qb = $em->createQueryBuilder()
@@ -193,6 +295,8 @@ class GestionCinemaController extends AbstractController
             'filtre_q' => $q,
             'filtre_salle' => $salle,
             'filtre_date' => $dateTexte,
+            'seanceEdit' => $seanceEdit,
+            'isEdit' => $seanceEdit !== null,
         ]);
     }
 
@@ -307,6 +411,7 @@ class GestionCinemaController extends AbstractController
         ]);
     }
 
+    // LIRE UNE DATE
     private function lireDate(string $texte): ?\DateTime
     {
         if ($texte === '') {
