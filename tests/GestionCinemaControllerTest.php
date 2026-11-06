@@ -114,7 +114,9 @@ class GestionCinemaControllerTest extends WebTestCase
             '_token' => 'faux_token',
         ]);
 
-        self::assertResponseRedirects('/admin/gestion/seances');
+        self::assertResponseRedirects(
+            '/admin/gestion/seances#formulaire-seance'
+        );
     }
 
     public function testAjoutAvecDonneesInvalides(): void
@@ -133,7 +135,7 @@ class GestionCinemaControllerTest extends WebTestCase
         ]);
 
         self::assertResponseRedirects(
-            '/admin/gestion/seances#ajouter-seance'
+            '/admin/gestion/seances#formulaire-seance'
         );
     }
 
@@ -154,7 +156,7 @@ class GestionCinemaControllerTest extends WebTestCase
         ]);
 
         self::assertResponseRedirects(
-            '/admin/gestion/seances#ajouter-seance'
+            '/admin/gestion/seances#formulaire-seance'
         );
     }
 
