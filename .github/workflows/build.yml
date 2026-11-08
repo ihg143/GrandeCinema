@@ -68,8 +68,8 @@ jobs:
       - name: Create test database
         run: php bin/console doctrine:database:create --if-not-exists --env=test
 
-      - name: Run database migrations
-        run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
+      - name: Create database schema
+        run: php bin/console doctrine:schema:create --env=test
 
       - name: Create coverage directory
         run: mkdir -p var/coverage

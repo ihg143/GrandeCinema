@@ -6,7 +6,7 @@ use App\Repository\PlaceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PlaceRepository::class)]
-#[ORM\Table(name: 'Places')]
+#[ORM\Table(name: 'places')]
 class Place
 {
     #[ORM\Id]
