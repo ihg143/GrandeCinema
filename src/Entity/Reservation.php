@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
-#[ORM\Table(name: 'Reservations')]
+#[ORM\Table(name: 'reservations')]
 class Reservation
 {
     public const PRIX_PLACE = 10; // en euros
