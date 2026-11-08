@@ -59,10 +59,7 @@ class GestionCinemaControllerTest extends WebTestCase
 
     private function tokenAjout(KernelBrowser $client): string
     {
-        $crawler = $client->request(
-            'GET',
-            '/admin/gestion/seances'
-        );
+        $crawler = $client->request('GET', '/admin/gestion/seances');
 
         self::assertResponseIsSuccessful();
 
@@ -70,11 +67,7 @@ class GestionCinemaControllerTest extends WebTestCase
             'form.form-ajout-seance input[name="_token"]'
         );
 
-        self::assertCount(
-            1,
-            $champToken,
-            'Le jeton CSRF du formulaire d’ajout est introuvable.'
-        );
+        self::assertCount(1, $champToken);
 
         return $champToken->attr('value');
     }
@@ -95,11 +88,7 @@ class GestionCinemaControllerTest extends WebTestCase
             'form.form-ajout-seance input[name="_token"]'
         );
 
-        self::assertCount(
-            1,
-            $champToken,
-            'Le jeton CSRF du formulaire de modification est introuvable.'
-        );
+        self::assertCount(1, $champToken);
 
         return $champToken->attr('value');
     }
@@ -121,11 +110,7 @@ class GestionCinemaControllerTest extends WebTestCase
             '//form[contains(@action, "/' . $id . '/supprimer")]//input[@name="_token"]'
         );
 
-        self::assertCount(
-            1,
-            $champToken,
-            'Le formulaire de suppression de la séance est introuvable.'
-        );
+        self::assertCount(1, $champToken);
 
         return $champToken->attr('value');
     }
@@ -214,10 +199,7 @@ class GestionCinemaControllerTest extends WebTestCase
             'salle' => 1,
         ]);
 
-        self::assertNotNull(
-            $seance,
-            'La séance aurait dû être créée.'
-        );
+        self::assertNotNull($seance);
     }
 
     // MODIFICATION
@@ -241,14 +223,11 @@ class GestionCinemaControllerTest extends WebTestCase
 
         $id = $seance->getIdSeance();
 
-        $crawler = $client->request(
-            'GET',
-            '/admin/gestion/seances',
-            ['edit' => $id]
-        );
+        $crawler = $client->request('GET', '/admin/gestion/seances', [
+            'edit' => $id,
+        ]);
 
         self::assertResponseIsSuccessful();
-
         self::assertSelectorExists('form.form-ajout-seance');
 
         self::assertSelectorTextContains(
@@ -298,16 +277,11 @@ class GestionCinemaControllerTest extends WebTestCase
 
         $seanceModifiee = $em->getRepository(Seance::class)->find($id);
 
-        self::assertNotNull(
-            $seanceModifiee,
-            'La séance modifiée doit toujours exister.'
-        );
-
+        self::assertNotNull($seanceModifiee);
         self::assertSame(
             '2030-02-20',
             $seanceModifiee->getDateSeance()->format('Y-m-d')
         );
-
         self::assertSame(
             '20:00',
             $seanceModifiee->getHoraireSeance()->format('H:i')
@@ -377,7 +351,7 @@ class GestionCinemaControllerTest extends WebTestCase
         );
     }
 
-    // TESTS DES SÉANCES INTROUVABLES
+    // SÉANCES INTROUVABLES
 
     public function testModificationSeanceIntrouvable(): void
     {
@@ -397,11 +371,9 @@ class GestionCinemaControllerTest extends WebTestCase
         $client = static::createClient();
         $this->connecterAdmin($client);
 
-        $client->request(
-            'GET',
-            '/admin/gestion/seances',
-            ['edit' => 999999]
-        );
+        $client->request('GET', '/admin/gestion/seances', [
+            'edit' => 999999,
+        ]);
 
         self::assertResponseRedirects('/admin/gestion/seances');
     }
@@ -434,11 +406,7 @@ class GestionCinemaControllerTest extends WebTestCase
         );
 
         self::assertResponseRedirects('/admin/gestion/seances');
-
-        self::assertNotNull(
-            $em->getRepository(Seance::class)->find($id),
-            'La séance ne doit pas être supprimée avec un jeton invalide.'
-        );
+        self::assertNotNull($em->getRepository(Seance::class)->find($id));
     }
 
     public function testSuppressionSeanceAvecSucces(): void
@@ -473,10 +441,106 @@ class GestionCinemaControllerTest extends WebTestCase
         );
 
         self::assertResponseRedirects('/admin/gestion/seances');
+        self::assertNull($em->getRepository(Seance::class)->find($id));
+    }
 
-        self::assertNull(
-            $em->getRepository(Seance::class)->find($id),
-            'La séance aurait dû être supprimée.'
+    // FILTRES ET PAGINATION
+
+    public function testAffichageReservationsAvecSucces(): void
+    {
+        $client = static::createClient();
+        $this->connecterAdmin($client);
+
+        $client->request('GET', '/admin/gestion/reservations');
+
+        self::assertResponseIsSuccessful();
+    }
+
+    public function testAffichageReservationsAvecFiltres(): void
+    {
+        $client = static::createClient();
+        $this->connecterAdmin($client);
+
+        $client->request('GET', '/admin/gestion/reservations', [
+            'q' => 'test@example.com',
+            'statut' => 'payee',
+            'date' => '2030-01-15',
+        ]);
+
+        self::assertResponseIsSuccessful();
+    }
+
+   public function testPaginationReservationsRedirigeSiPageInexistante(): void
+{
+    $client = static::createClient();
+    $this->connecterAdmin($client);
+
+    $client->request('GET', '/admin/gestion/reservations', [
+        'page' => 999999,
+        'q' => 'aucune_reservation_' . uniqid(),
+        'statut' => 'payee',
+        'date' => '2030-01-15',
+    ]);
+
+    self::assertResponseRedirects();
+
+    $url = $client->getResponse()->headers->get('Location');
+
+    self::assertNotNull($url);
+
+    parse_str(
+        parse_url($url, PHP_URL_QUERY) ?? '',
+        $parametres
+    );
+
+    self::assertSame('1', (string) $parametres['page']);
+    self::assertStringContainsString(
+        'aucune_reservation_',
+        $parametres['q']
+    );
+    self::assertSame('payee', $parametres['statut']);
+    self::assertSame('2030-01-15', $parametres['date']);
+}
+    public function testAffichageSeancesAvecFiltres(): void
+    {
+        $client = static::createClient();
+        $this->connecterAdmin($client);
+
+        $client->request('GET', '/admin/gestion/seances', [
+            'q' => 'Film test',
+            'salle' => '1',
+            'date' => '2030-01-15',
+        ]);
+
+        self::assertResponseIsSuccessful();
+    }
+
+    public function testPaginationSeancesRedirigeSiPageInexistante(): void
+    {
+        $client = static::createClient();
+        $this->connecterAdmin($client);
+
+        $client->request('GET', '/admin/gestion/seances', [
+            'page' => 999999,
+            'q' => 'Film qui nexiste pas',
+            'salle' => '999',
+            'date' => '2030-01-15',
+        ]);
+
+        self::assertResponseRedirects();
+
+        $url = $client->getResponse()->headers->get('Location');
+
+        self::assertNotNull($url);
+
+        parse_str(
+            parse_url($url, PHP_URL_QUERY) ?? '',
+            $parametres
         );
+
+        self::assertSame('1', (string) $parametres['page']);
+        self::assertSame('Film qui nexiste pas', $parametres['q']);
+        self::assertSame('999', $parametres['salle']);
+        self::assertSame('2030-01-15', $parametres['date']);
     }
 }

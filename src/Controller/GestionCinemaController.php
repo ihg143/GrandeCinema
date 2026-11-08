@@ -7,7 +7,8 @@ use App\Entity\Reservation;
 use App\Entity\Seance;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\ORM\Tools\Pagination\OffsetPaginator;
+use Doctrine\ORM\Tools\Pagination\Window;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -112,7 +113,7 @@ class GestionCinemaController extends AbstractController
 
             // Vérifier que la salle existe
             $salleExiste = (int) $em->getConnection()->fetchOne(
-                'SELECT COUNT(*) FROM Places WHERE salle = ?',
+                'SELECT COUNT(*) FROM places WHERE salle = ?',
                 [(int) $salleTexte]
             ) > 0;
 
@@ -233,12 +234,13 @@ class GestionCinemaController extends AbstractController
                 ->setParameter('date', $dateObjet, Types::DATE_MUTABLE);
         }
 
-        // PAGINATION
-        $qb->setFirstResult(($page - 1) * self::PAR_PAGE)
-            ->setMaxResults(self::PAR_PAGE);
+        // PAGINATION DES SÉANCES
+        $pagination = (new OffsetPaginator())->paginate(
+            $qb,
+            new Window(($page - 1) * self::PAR_PAGE, self::PAR_PAGE)
+        );
 
-        $paginator = new Paginator($qb);
-        $total = count($paginator);
+        $total = $pagination->getTotalCount();
         $pages = max(1, (int) ceil($total / self::PAR_PAGE));
 
         if ($page > $pages) {
@@ -250,17 +252,17 @@ class GestionCinemaController extends AbstractController
             ]);
         }
 
-        $seances = iterator_to_array($paginator, false);
+        $seances = $pagination->getItems();
 
         // CAPACITÉ ET PLACES RÉSERVÉES
         $connexion = $em->getConnection();
 
         $capacites = $connexion->fetchAllKeyValue(
-            'SELECT salle, COUNT(*) FROM Places GROUP BY salle'
+            'SELECT salle, COUNT(*) FROM places GROUP BY salle'
         );
 
         $reservees = $connexion->fetchAllKeyValue(
-            'SELECT idSeance, COUNT(*) FROM ReservationPlaces GROUP BY idSeance'
+            'SELECT idSeance, COUNT(*) FROM reservationplaces GROUP BY idSeance'
         );
 
         $places = [];
@@ -371,11 +373,13 @@ class GestionCinemaController extends AbstractController
                 ->setParameter('date', $dateObjet, Types::DATE_MUTABLE);
         }
 
-        $qb->setFirstResult(($page - 1) * self::PAR_PAGE)
-            ->setMaxResults(self::PAR_PAGE);
+        // PAGINATION DES RÉSERVATIONS
+        $pagination = (new OffsetPaginator())->paginate(
+            $qb,
+            new Window(($page - 1) * self::PAR_PAGE, self::PAR_PAGE)
+        );
 
-        $paginator = new Paginator($qb);
-        $totalFiltre = count($paginator);
+        $totalFiltre = $pagination->getTotalCount();
         $pages = max(1, (int) ceil($totalFiltre / self::PAR_PAGE));
 
         if ($page > $pages) {
@@ -387,7 +391,7 @@ class GestionCinemaController extends AbstractController
             ]);
         }
 
-        $reservations = iterator_to_array($paginator, false);
+        $reservations = $pagination->getItems();
         $repo = $em->getRepository(Reservation::class);
 
         return $this->render('admin/reservationsAdmin.html.twig', [

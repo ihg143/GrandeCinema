@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
-#[ORM\Table(name: 'Utilisateurs')]
+#[ORM\Table(name: 'utilisateurs')]
 #[UniqueEntity(
     fields: ['email'],
     message: 'Un compte existe déjà avec cette adresse e-mail.'

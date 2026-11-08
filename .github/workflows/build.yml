@@ -51,7 +51,7 @@ jobs:
           APP_DEBUG=1
           APP_SECRET=github-actions-test-secret
           DEFAULT_URI=http://localhost
-          DATABASE_URL="mysql://root:root@127.0.0.1:3306/grandecinema_test?serverVersion=10.11.0-MariaDB&charset=utf8mb4"
+          DATABASE_URL="mysql://root:root@127.0.0.1:3306/grandecinema?serverVersion=10.11.0-MariaDB&charset=utf8mb4"
           TURNSTILE_SECRET_KEY=test-secret-key
           TURNSTILE_SITE_KEY=test-site-key
           MAILER_DSN=null://null

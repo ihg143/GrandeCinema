@@ -6,7 +6,7 @@ use App\Repository\ReservationPlaceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ReservationPlaceRepository::class)]
-#[ORM\Table(name: 'ReservationPlaces')]
+#[ORM\Table(name: 'reservationplaces')]
 #[ORM\UniqueConstraint(
     name: 'uniq_place_seance',
     columns: ['idPlace', 'idSeance']
