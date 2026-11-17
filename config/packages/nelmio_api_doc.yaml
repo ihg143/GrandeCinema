@@ -1,0 +1,15 @@
+
+nelmio_api_doc:
+    documentation:
+        info:
+            title: 'GrandCiné API'
+            description: 'API de gestion des réservations de places de cinéma.'
+            version: '1.0.0'
+
+    areas:
+        default:
+            path_patterns:
+                - '^/api(?!/doc(?:\.json)?$)'
+
+    html_config:
+        assets_mode: cdn
