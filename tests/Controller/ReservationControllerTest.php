@@ -7,6 +7,7 @@ use App\Entity\Place;
 use App\Entity\Reservation;
 use App\Entity\Seance;
 use App\Entity\Utilisateur;
+use App\Entity\ReservationPlace;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -240,4 +241,62 @@ if ($placeToRemove !== null) {
 
         $this->assertNotNull($reservation);
     }
+
+public function testAlreadyReservedPlaceIsRejected(): void
+{
+    $this->client->loginUser($this->utilisateur);
+
+    // Récupérer le jeton CSRF
+    $token = $this->getReservationCsrfToken();
+
+    // Première réservation
+    $this->client->request(
+        'POST',
+        '/reservation/' . $this->seance->getIdSeance(),
+        [
+            '_token' => $token,
+            'places' => [$this->place->getIdPlace()],
+        ]
+    );
+
+    $this->assertResponseRedirects();
+
+    // Vérifier que la place est réservée
+    $reservationPlaces = $this->entityManager
+        ->getRepository(ReservationPlace::class)
+        ->findBy([
+            'place' => $this->place,
+            'seance' => $this->seance,
+        ]);
+
+    $this->assertCount(1, $reservationPlaces);
+
+    // Deuxième tentative sur la même place
+    $token = $this->getReservationCsrfToken();
+
+    $this->client->request(
+        'POST',
+        '/reservation/' . $this->seance->getIdSeance(),
+        [
+            '_token' => $token,
+            'places' => [$this->place->getIdPlace()],
+        ]
+    );
+
+    // La deuxième tentative doit être refusée
+    $this->assertResponseRedirects();
+
+    // Vérifier qu'une seule réservation de la place existe
+    $this->entityManager->clear();
+
+    $reservationPlaces = $this->entityManager
+        ->getRepository(ReservationPlace::class)
+        ->findBy([
+            'place' => $this->place->getIdPlace(),
+            'seance' => $this->seance->getIdSeance(),
+        ]);
+
+    $this->assertCount(1, $reservationPlaces);
+}
+
 }
